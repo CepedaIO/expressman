@@ -3,7 +3,6 @@ import { expect } from 'chai';
 import {container, DependencyContainer, inject, injectable} from "tsyringe";
 import ContainerMiddleware from "./ContainerMiddleware";
 import Context from "../models/Context";
-import Container from "../models/Container";
 import {Request, Response} from "express";
 import tokens from "../tokens";
 
@@ -30,7 +29,6 @@ describe('ContainerMiddleware', function() {
     class Cut<ContainerT = DependencyContainer> {
       constructor(
         public context:Context<ContainerT>,
-        public container:Container<ContainerT>,
         @inject(tokens.Request) public request:Request,
         @inject(tokens.Response) public response:Response,
         @inject(tokens.Container) public consumerContainer: ContainerT

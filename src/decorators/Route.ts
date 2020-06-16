@@ -1,7 +1,8 @@
-import {ROUTE_KEY} from "../constants";
+import Manifest from "../services/Manifest";
+import {IRouteHandler} from "../models/IRouteHandler";
 
 export function Route(method:string, path:string) {
-  return (target) => {
-    Reflect.defineMetadata(ROUTE_KEY, { method, path }, target);
+  return (target:Newable<IRouteHandler<any, any>>) => {
+    Manifest.recordHTTP(target, method, path);
   }
 }

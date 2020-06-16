@@ -3,10 +3,18 @@ interface Newable<T> {
 }
 
 interface IContainer<ContainerT> {
-  raw:ContainerT;
-  bind<T>(token:Newable<T> | symbol, value:T);
+  bindValue<T>(token:Newable<T> | symbol, value:T);
+  resolve<T>(token:Newable<T> | symbol);
 }
 
-interface IContainerProvider<ContainerT> {
-  create():IContainer<ContainerT>;
+type IChildContainer<ContainerT> = IContainer<ContainerT>;
+
+interface IParentContainer<ContainerT> extends IContainer<ContainerT> {
+  create():IChildContainer<ContainerT>;
+}
+
+interface IHTTPResponse<U> {
+  statusCode?: number;
+  contentType?: string;
+  body: U;
 }
