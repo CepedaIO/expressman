@@ -2,19 +2,21 @@ import 'mocha';
 import 'reflect-metadata';
 import { expect } from 'chai';
 import {Route} from "./Route";
-import {ROUTE_KEY} from "../constants";
+import Manifest from "../services/Manifest";
 
 describe('Route', function() {
   @Route('GET', '/')
-  class Cut {
+  class CUT {
+    handle() {
 
+    }
   }
 
   it('should define a get route as metadata', function() {
-    const result = Reflect.getMetadata(ROUTE_KEY, Cut);
-    expect(result).to.deep.equal({
-      method: 'GET',
-      path: '/'
-    });
+    const entry = Manifest.entries['GET /'];
+
+    expect(entry.method).to.equal('GET');
+    expect(entry.path).to.equal('/');
+    expect(entry.target).to.equal(CUT);
   });
 });

@@ -5,47 +5,42 @@ import ContainerMiddleware from "./ContainerMiddleware";
 import Context from "../models/Context";
 import {Request, Response} from "express";
 import tokens from "../tokens";
+import {ChildContainer, ParentContainer} from "../mocks/ParentContainer";
+import Manifest from "../services/Manifest";
 
 describe('ContainerMiddleware', function() {
-  let child:DependencyContainer;
+  let child:IChildContainer<DependencyContainer>;
 
-  const provider = {
-    create() {
-      child = container.createChildContainer();
-      return {
-        raw: child,
-        bind(token, value) {
-          this.raw.register(token, {useValue: value});
-        },
-        resolve(token) {
-          return this.raw.resolve(token);
-        }
-      };
+  beforeEach(function() {
+    Manifest.container = new ParentContainer();
+    Manifest.container.create = () => {
+      child = new ChildContainer(container.createChildContainer());
+      return child;
     }
-  };
+  });
 
   it('should be able to resolve Request/Response objects in service class', function() {
     @injectable()
-    class Cut<ContainerT = DependencyContainer> {
+    class CUT<ContainerT = DependencyContainer> {
       constructor(
         public context:Context<ContainerT>,
         @inject(tokens.Request) public request:Request,
-        @inject(tokens.Response) public response:Response,
-        @inject(tokens.Container) public consumerContainer: ContainerT
+        @inject(tokens.Response) public response:Response
       ) { }
     }
 
     const req = { request: 'This is an http request!' };
-    const resp = { response: 'This is an http response!' };
+    const resp = { response: 'This is an http response!', locals: {} };
+
 
     // @ts-ignore
-    ContainerMiddleware<DependencyContainer>(provider)(req, resp, () => {});
-    const cutInstance = child.resolve<Cut>(Cut);
+    ContainerMiddleware<DependencyContainer>(req, resp, () => {});
+    const cutInstance = child.resolve<CUT>(CUT);
 
     expect(cutInstance.context.request).to.equal(req);
     expect(cutInstance.context.response).to.equal(resp);
+    expect(cutInstance.context.container).to.equal(child);
     expect(cutInstance.request).to.equal(req);
     expect(cutInstance.response).to.equal(resp);
-    expect(cutInstance.consumerContainer).to.equal(child);
   });
 });

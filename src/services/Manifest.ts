@@ -1,6 +1,6 @@
 import {Application, RequestHandler} from "express";
 import ContainerMiddleware from "../middleware/ContainerMiddleware";
-import {IRouteHandler} from "../models/IRouteHandler";
+import {RouteHandlerConstructor} from "../models/IRouteHandler";
 import {allMiddlewareFromHandler} from "./middlewareFromHandler";
 
 export type Middleware = RequestHandler | Array<RequestHandler>;
@@ -15,7 +15,8 @@ class Manifest {
   container:IParentContainer<any>;
   entries: { [key:string]:HandlerEntry } = {};
 
-  recordHTTP(target:Newable<IRouteHandler<any, any>>, method:string, path:string) {
+  recordHTTP(target:RouteHandlerConstructor, method:string, path:string) {
+    debugger;
     this.entries[`${method} ${path}`] = {
       method,
       path,

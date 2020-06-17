@@ -1,44 +1,22 @@
 import request = require('supertest');
 import express = require('express');
 import { expect } from 'chai';
-import {container as parent, inject, injectable} from 'tsyringe';
+import {inject, injectable} from 'tsyringe';
 import {Route} from "../decorators/Route";
 import Manifest from "./Manifest";
-import DependencyContainer from "tsyringe/dist/typings/types/dependency-container";
 import {Response} from "express";
 import tokens from "../tokens";
 import {IRouteHandler} from "../models/IRouteHandler";
+import {publish} from "./publish";
+import {ParentContainer} from "../mocks/ParentContainer";
 
-class TsyringeWrapper implements IParentContainer<DependencyContainer>{
-  create() {
-    const child = parent.createChildContainer();
-
-    return {
-      bindValue(token, value) {
-        return child.register(token, { useValue:value })
-      },
-      resolve(token) {
-        return child.resolve(token);
-      }
-    };
-  }
-
-  bindValue(token, value) {
-    return parent.register(token, { useValue:value });
-  }
-
-  resolve(token) {
-    return parent.resolve(token);
-  }
-}
-
-describe.only('Manifest', function() {
+describe('Manifest', function() {
   this.timeout(0);
-  let app;
-  const container = new TsyringeWrapper();
+  let app, container;
 
   beforeEach(function() {
     app = express();
+    container = new ParentContainer();
   });
 
   it('should use the result of the handler as the content of the response', async function() {
@@ -50,7 +28,7 @@ describe.only('Manifest', function() {
       }
     }
 
-    Manifest.generateRoutes(app, container);
+    publish(app, container);
     const result = await request(app).get('/return-as-response');
 
     expect(result.body.message).to.equal('Victory!');
@@ -69,7 +47,7 @@ describe.only('Manifest', function() {
       }
     }
 
-    Manifest.generateRoutes(app, container);
+    publish(app, container);
     const result = await request(app).get('/http-response-response');
 
     expect(result.statusCode).to.equal(400);
@@ -90,7 +68,7 @@ describe.only('Manifest', function() {
       }
     }
 
-    Manifest.generateRoutes(app, container);
+    publish(app, container);
     const result = await request(app).get('/traditional-response');
 
     expect(result.statusCode).to.equal(400);
@@ -119,7 +97,7 @@ describe.only('Manifest', function() {
       }
     }
 
-    Manifest.generateRoutes(app, container);
+    publish(app, container);
     const result = await request(app).get('/traditional-response');
 
     expect(result.statusCode).to.equal(500);
