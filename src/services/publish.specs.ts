@@ -3,14 +3,13 @@ import express = require('express');
 import { expect } from 'chai';
 import {inject, injectable} from 'tsyringe';
 import {Route} from "../decorators/Route";
-import Manifest from "./Manifest";
 import {Response} from "express";
 import tokens from "../tokens";
 import {IRouteHandler} from "../models/IRouteHandler";
 import {publish} from "./publish";
 import {ParentContainer} from "../mocks/ParentContainer";
 
-describe('Manifest', function() {
+describe('publish', function() {
   this.timeout(0);
   let app, container;
 
@@ -31,6 +30,7 @@ describe('Manifest', function() {
     publish(app, container);
     const result = await request(app).get('/return-as-response');
 
+    debugger;
     expect(result.body.message).to.equal('Victory!');
   });
 
