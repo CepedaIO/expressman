@@ -1,8 +1,10 @@
 import Manifest from "../services/Manifest";
-import {IRouteHandler} from "../models/IRouteHandler";
+import {RouteHandlerConstructor} from "../models/IRouteHandler";
+import {injectable} from "tsyringe";
 
 export function Route(method:string, path:string) {
-  return (target:Newable<IRouteHandler<any, any>>) => {
+  return (target:RouteHandlerConstructor) => {
+    injectable()(target);
     Manifest.recordHTTP(target, method, path);
   }
 }

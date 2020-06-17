@@ -1,25 +1,22 @@
 import request = require('supertest');
 import express = require('express');
 import { expect } from 'chai';
-import {inject, injectable} from 'tsyringe';
-import {Route} from "../decorators/Route";
+import {inject} from 'tsyringe';
+import {Route} from "../decorators";
 import {Response} from "express";
 import tokens from "../tokens";
 import {IRouteHandler} from "../models/IRouteHandler";
 import {publish} from "./publish";
-import {ParentContainer} from "../mocks/ParentContainer";
 
 describe('publish', function() {
   this.timeout(0);
-  let app, container;
+  let app;
 
   beforeEach(function() {
     app = express();
-    container = new ParentContainer();
   });
 
   it('should use the result of the handler as the content of the response', async function() {
-    @injectable()
     @Route('GET', '/return-as-response')
     class CUT {
       handle() {
@@ -27,7 +24,7 @@ describe('publish', function() {
       }
     }
 
-    publish(app, container);
+    publish(app);
     const result = await request(app).get('/return-as-response');
 
     debugger;
@@ -35,7 +32,6 @@ describe('publish', function() {
   });
 
   it('should use HTTPResponse class for more precise control over response', async function() {
-    @injectable()
     @Route('GET', '/http-response-response')
     class CUT {
       handle() {
@@ -47,7 +43,7 @@ describe('publish', function() {
       }
     }
 
-    publish(app, container);
+    publish(app);
     const result = await request(app).get('/http-response-response');
 
     expect(result.statusCode).to.equal(400);
@@ -56,7 +52,6 @@ describe('publish', function() {
   });
 
   it('should be able to use traditional request object for traditional handling', async function() {
-    @injectable()
     @Route('GET', '/traditional-response')
     class CUT {
       constructor(
@@ -68,7 +63,7 @@ describe('publish', function() {
       }
     }
 
-    publish(app, container);
+    publish(app);
     const result = await request(app).get('/traditional-response');
 
     expect(result.statusCode).to.equal(400);
@@ -77,7 +72,6 @@ describe('publish', function() {
   });
 
   it('should allow ability to handle error and return a response', async function() {
-    @injectable()
     @Route('GET', '/traditional-response')
     class CUT implements IRouteHandler<any, any>{
       constructor(
@@ -97,7 +91,7 @@ describe('publish', function() {
       }
     }
 
-    publish(app, container);
+    publish(app);
     const result = await request(app).get('/traditional-response');
 
     expect(result.statusCode).to.equal(500);

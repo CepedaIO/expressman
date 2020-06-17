@@ -1,16 +1,16 @@
 import {Request, Response, NextFunction} from "express";
-import Context from "../models/Context";
 import tokens from "../tokens";
-import Manifest from "../services/Manifest";
+import {container} from "tsyringe";
 
 export default function ContainerMiddleware<ContainerT>(req: Request, resp: Response, next: NextFunction) {
-  const container = Manifest.container.create();
+  const child = container.createChildContainer();
 
-  container.bindValue(Context, new Context(req, resp, container));
-  container.bindValue<Request>(tokens.Request, req);
-  container.bindValue<Response>(tokens.Response, resp);
+  child.register(tokens.Request, { useValue: req });
+  child.register(tokens.Response, { useValue: resp });
+  child.register(tokens.Container, { useValue: child });
 
-  resp.locals.container = container;
+  resp.locals.container = child;
 
   next();
+  return child;
 }

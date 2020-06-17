@@ -1,25 +1,11 @@
-import 'mocha';
-import 'reflect-metadata';
 import { expect } from 'chai';
-import {container, DependencyContainer, inject, injectable} from "tsyringe";
+import {DependencyContainer, inject, injectable} from "tsyringe";
 import ContainerMiddleware from "./ContainerMiddleware";
 import Context from "../models/Context";
 import {Request, Response} from "express";
 import tokens from "../tokens";
-import {ChildContainer, ParentContainer} from "../mocks/ParentContainer";
-import Manifest from "../services/Manifest";
 
 describe('ContainerMiddleware', function() {
-  let child:IChildContainer<DependencyContainer>;
-
-  beforeEach(function() {
-    Manifest.container = new ParentContainer();
-    Manifest.container.create = () => {
-      child = new ChildContainer(container.createChildContainer());
-      return child;
-    }
-  });
-
   it('should be able to resolve Request/Response objects in service class', function() {
     @injectable()
     class CUT<ContainerT = DependencyContainer> {
@@ -36,6 +22,8 @@ describe('ContainerMiddleware', function() {
 
     // @ts-ignore
     ContainerMiddleware<DependencyContainer>(req, resp, () => {});
+    // @ts-ignore
+    const child = resp.locals.container;
     const cutInstance = child.resolve<CUT>(CUT);
 
     expect(cutInstance.context.request).to.equal(req);

@@ -9,7 +9,7 @@ export type Middleware = RequestHandler | Array<RequestHandler>;
 interface HandlerEntry<U = any> {
   method:string;
   path:string;
-  target:Newable<U>;
+  target:RouteHandlerConstructor;
 }
 
 class Manifest {
@@ -34,14 +34,12 @@ class Manifest {
     this.after.set(target, middleware);
   }
 
-  generateRoutes<U>(app:Application, container:IParentContainer<U>) {
-    this.container = container;
-
+  generateRoutes<U>(app:Application) {
     app.use(ContainerMiddleware);
 
     this.route.forEach(entry => {
       const method = entry.method.toLowerCase();
-      app[method](entry.path, allMiddlewareFromHandler(entry.target, container));
+      app[method](entry.path, allMiddlewareFromHandler(entry.target));
     });
 
     app.use(SendResponseMiddleware);

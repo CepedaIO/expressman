@@ -30,12 +30,12 @@ function middlewareFromHandler(constructor:RouteHandlerConstructor, onResult?: (
   }
 }
 
-export function allMiddlewareFromHandler(constructor:RouteHandlerConstructor, container:IChildContainer<any>): Middleware[] {
+export function allMiddlewareFromHandler(constructor:RouteHandlerConstructor): Middleware[] {
   const middleware:Middleware[] = [];
 
   if(Manifest.before.has(constructor)) {
     const beforeRouteHandlers = Manifest.before.get(constructor)!;
-    const beforeMiddleware = beforeRouteHandlers.map(handler => allMiddlewareFromHandler(handler, container));
+    const beforeMiddleware = beforeRouteHandlers.map(handler => allMiddlewareFromHandler(handler));
     middleware.push(...flatten(beforeMiddleware));
   }
 
@@ -45,7 +45,7 @@ export function allMiddlewareFromHandler(constructor:RouteHandlerConstructor, co
 
   if(Manifest.after.has(constructor)) {
     const afterRouteHandlers = Manifest.after.get(constructor)!;
-    const afterMiddleware = afterRouteHandlers.map(handler => allMiddlewareFromHandler(handler, container));
+    const afterMiddleware = afterRouteHandlers.map(handler => allMiddlewareFromHandler(handler));
     middleware.push(...flatten(afterMiddleware));
   }
 

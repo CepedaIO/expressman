@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "ts-mocha src/**/*.specs.ts",
-    "dev": "ts-node-dev src/index.ts"
+    "test": "ts-mocha -r reflect-metadata src/**/*.specs.ts",
+    "dev": "ts-node-dev example/index.ts",
+    "build": "tsc --declaration",
+    "prepublish": "npm run build"
   },
   "author": "",
   "license": "ISC",
@@ -23,11 +25,11 @@
     "reflect-metadata": "^0.1.13",
     "ts-node": "^8.10.2",
     "ts-node-dev": "^1.0.0-pre.44",
+    "tsyringe": "^4.3.0",
     "typescript": "^3.9.3"
   },
   "devDependencies": {
     "supertest": "^4.0.2",
-    "ts-mocha": "^7.0.0",
-    "tsyringe": "^4.3.0"
+    "ts-mocha": "^7.0.0"
   }
 }
