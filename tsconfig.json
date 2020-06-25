@@ -1,22 +1,21 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2020",
-    "declaration": true,
+    "target": "es2019",
     "sourceMap": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "strictNullChecks": true,
     "moduleResolution": "node",
-    "rootDir": "./src",
+    "rootDirs": [
+      "./src",
+      "./example"
+    ],
     "outDir": "./dist",
-    "lib": ["es2017"]
+    "lib": ["esnext"]
   },
   "exclude": [
     "node_modules"
-  ],
-  "include": [
-    "./src/**/*.ts"
   ]
 }

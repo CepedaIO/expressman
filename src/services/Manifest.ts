@@ -23,7 +23,7 @@ class Manifest {
   before: Map<RouteHandlerConstructor, RouteHandlerConstructor[]> = new Map();
   after: Map<RouteHandlerConstructor, RouteHandlerConstructor[]> = new Map();
 
-  recordHTTP(target:RouteHandlerConstructor, method:string, path:string) {
+  recordRoute(target:RouteHandlerConstructor, method:string, path:string) {
     this.route.set(`${method} ${path}`, {
       method,
       path,

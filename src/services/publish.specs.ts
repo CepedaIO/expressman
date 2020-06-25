@@ -27,7 +27,6 @@ describe('publish', function() {
 
     Manifest.generateRoutes(app);
     const result = await request(app).get('/return-as-response');
-
     expect(result.body.message).to.equal('Victory!');
   });
 
