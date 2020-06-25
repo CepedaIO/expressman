@@ -2,7 +2,7 @@ import {Request, Response, NextFunction} from "express";
 import tokens from "../tokens";
 import {container} from "tsyringe";
 
-export default function ContainerMiddleware<ContainerT>(req: Request, resp: Response, next: NextFunction) {
+export default function ContainerMiddleware(req: Request, resp: Response, next: NextFunction) {
   const child = container.createChildContainer();
 
   child.register(tokens.Request, { useValue: req });

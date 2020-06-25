@@ -9,7 +9,7 @@ function middlewareFromHandler(constructor:RouteHandlerConstructor, onResult?: (
     const handler = container.resolve(constructor);
 
     try {
-      const result = handler.handle(req, resp, container);
+      const result = handler.handle(req.body);
       resp.locals[constructor.name] = result;
       onResult && onResult(result, resp);
       next();
@@ -40,7 +40,7 @@ export function allMiddlewareFromHandler(constructor:RouteHandlerConstructor): M
   }
 
   middleware.push(middlewareFromHandler(constructor, (result, resp:Response) => {
-    resp.locals['$route'] = result;
+    resp.locals['$response'] = result;
   }));
 
   if(Manifest.after.has(constructor)) {
