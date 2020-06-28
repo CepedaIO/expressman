@@ -4,9 +4,7 @@ import { expect } from 'chai';
 import {inject} from 'tsyringe';
 import {Route} from "../decorators";
 import {Response} from "express";
-import {tokens} from "../tokens";
-import {IRouteHandler} from "../models/IRouteHandler";
-import {publish} from "./publish";
+import tokens from "../tokens";
 import Manifest from "./Manifest";
 
 describe('publish', function() {
@@ -72,7 +70,7 @@ describe('publish', function() {
 
   it('should allow ability to handle error and return a response', async function() {
     @Route('GET', '/traditional-response')
-    class CUT implements IRouteHandler<any, any>{
+    class CUT implements IRouteHandler {
       constructor(
         @inject(tokens.Response) private response:Response
       ) {}

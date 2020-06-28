@@ -57,4 +57,15 @@ describe('JSONFromType', function() {
       contact: 'Partial<NestedInterface>'
     });
   });
+
+  it('should json an interface with a nested imported interface declaration', function() {
+    const sourceFile = project.getSourceFile('src/tests/DeclarationParser/Tracker/InterfaceWIthNestedImportedInterface.ts')!;
+    const interfaceDef = sourceFile.getInterface('InterfaceWithNestedImportedInterface')!;
+    const interfaceJSON = JSONFromType(interfaceDef.getType());
+
+    expect(interfaceJSON).to.deep.equal({
+      field1:'string',
+      imported:'ImportedInterface'
+    });
+  });
 });

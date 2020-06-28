@@ -2,9 +2,9 @@ import {injectable} from "tsyringe";
 
 @injectable()
 export default class MemberRepository {
-  getMembers() {
+  getMembers():Member[] {
     return [
-      { name:'Alfred', role:'Admin', active: true }
+      { firstname:'Alfred', lastname:'Cepeda' }
     ];
   }
 }

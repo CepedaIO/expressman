@@ -3,7 +3,7 @@ import { Project, StructureKind } from "ts-morph";
 
 const project = new Project();
 
-const sourceFile = project.addSourceFileAtPath('example/interface.ts');
+const sourceFile = project.addSourceFileAtPath('example/types.d.ts');
 
 const classes = sourceFile.getClasses();
 classes.forEach(classDefinition => {

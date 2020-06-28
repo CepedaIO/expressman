@@ -1,4 +1,3 @@
-import {RouteHandlerConstructor} from "../models/IRouteHandler";
 import {NextFunction, Request, Response} from "express";
 import Manifest, {Middleware} from "./Manifest";
 import { flatten } from 'lodash';

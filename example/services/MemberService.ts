@@ -7,7 +7,7 @@ export default class MemberService {
     private memberRepository:MemberRepository
   ) { }
 
-  getActiveMembers() {
-    return this.memberRepository.getMembers().filter(member => member.active);
+  getActiveMembers():Member {
+    return this.memberRepository.getMembers()[0];
   }
 }
