@@ -2,9 +2,8 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es2020",
+    "declaration": true,
     "sourceMap": true,
-    "allowJs": true,
-    "checkJs": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,

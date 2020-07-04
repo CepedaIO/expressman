@@ -3,7 +3,7 @@ import {DependencyContainer, inject, injectable} from "tsyringe";
 import ContainerMiddleware from "./ContainerMiddleware";
 import Context from "../models/Context";
 import {Request, Response} from "express";
-import tokens from "../tokens";
+import {tokens} from "../tokens";
 
 describe('ContainerMiddleware', function() {
   it('should be able to resolve Request/Response objects in service class', function() {

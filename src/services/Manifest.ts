@@ -1,8 +1,9 @@
-import {Application, RequestHandler} from "express";
+import {Application, Request, RequestHandler, Response} from "express";
 import ContainerMiddleware from "../middleware/ContainerMiddleware";
 import {RouteHandlerConstructor} from "../models/IRouteHandler";
 import {allMiddlewareFromHandler} from "./allMiddlewareFromHandler";
 import {SendResponseMiddleware} from "../middleware/SendResponseMiddleware";
+import DependencyContainer from "tsyringe/dist/typings/types/dependency-container";
 
 export type Middleware = RequestHandler | Array<RequestHandler>;
 
@@ -10,6 +11,10 @@ interface HandlerEntry<U = any> {
   method:string;
   path:string;
   target:RouteHandlerConstructor;
+}
+
+export interface ManifestOptions {
+  prehandle?(container:DependencyContainer, request:Request, response:Response);
 }
 
 class Manifest {
@@ -34,8 +39,8 @@ class Manifest {
     this.after.set(target, middleware);
   }
 
-  generateRoutes<U>(app:Application) {
-    app.use(ContainerMiddleware);
+  generateRoutes(app:Application, options:ManifestOptions = {}) {
+    app.use(ContainerMiddleware(options));
 
     this.route.forEach(entry => {
       const method = entry.method.toLowerCase();

@@ -4,9 +4,10 @@ import { expect } from 'chai';
 import {inject} from 'tsyringe';
 import {Route} from "../decorators";
 import {Response} from "express";
-import tokens from "../tokens";
+import {tokens} from "../tokens";
 import {IRouteHandler} from "../models/IRouteHandler";
 import {publish} from "./publish";
+import Manifest from "./Manifest";
 
 describe('publish', function() {
   this.timeout(0);
@@ -24,10 +25,9 @@ describe('publish', function() {
       }
     }
 
-    publish(app);
+    Manifest.generateRoutes(app);
     const result = await request(app).get('/return-as-response');
 
-    debugger;
     expect(result.body.message).to.equal('Victory!');
   });
 
@@ -43,7 +43,7 @@ describe('publish', function() {
       }
     }
 
-    publish(app);
+    Manifest.generateRoutes(app);
     const result = await request(app).get('/http-response-response');
 
     expect(result.statusCode).to.equal(400);
@@ -63,7 +63,7 @@ describe('publish', function() {
       }
     }
 
-    publish(app);
+    Manifest.generateRoutes(app);
     const result = await request(app).get('/traditional-response');
 
     expect(result.statusCode).to.equal(400);
@@ -91,7 +91,7 @@ describe('publish', function() {
       }
     }
 
-    publish(app);
+    Manifest.generateRoutes(app);
     const result = await request(app).get('/traditional-response');
 
     expect(result.statusCode).to.equal(500);

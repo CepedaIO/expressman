@@ -1,16 +1,23 @@
 import {Request, Response, NextFunction} from "express";
-import tokens from "../tokens";
+import {tokens} from "../tokens";
 import {container} from "tsyringe";
+import {ManifestOptions} from "../services/Manifest";
 
-export default function ContainerMiddleware(req: Request, resp: Response, next: NextFunction) {
-  const child = container.createChildContainer();
+export default function ContainerMiddleware(options:ManifestOptions) {
+  return (req: Request, resp: Response, next: NextFunction) => {
+    const child = container.createChildContainer();
 
-  child.register(tokens.Request, { useValue: req });
-  child.register(tokens.Response, { useValue: resp });
-  child.register(tokens.Container, { useValue: child });
+    child.register(tokens.Request, {useValue: req});
+    child.register(tokens.Response, {useValue: resp});
+    child.register(tokens.Container, {useValue: child});
 
-  resp.locals.container = child;
+    resp.locals.container = child;
 
-  next();
-  return child;
+    if(options.prehandle) {
+      options.prehandle(child, req, resp);
+    }
+
+    next();
+    return child;
+  };
 }

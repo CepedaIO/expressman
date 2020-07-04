@@ -9,14 +9,14 @@ function middlewareFromHandler(constructor:RouteHandlerConstructor, onResult?: (
     const handler = container.resolve(constructor);
 
     try {
-      const result = handler.handle(req.body);
+      const result = await handler.handle(req.body);
       resp.locals[constructor.name] = result;
       onResult && onResult(result, resp);
       next();
     } catch(err) {
       if(handler.catch) {
         try {
-          const result = handler.catch(err);
+          const result = await handler.catch(err);
           resp.locals[constructor.name] = result;
           onResult && onResult(result, resp);
           next();
