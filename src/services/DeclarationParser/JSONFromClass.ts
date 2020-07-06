@@ -12,21 +12,8 @@ export function JSONFromClass(classDec:ClassDeclaration, tracker?:Tracker) {
   if(!parameter) {
     throw new Error('No parameter defined for handle method');
   }
-
-  const parameterType = parameter.getType();
-  tracker?.encounteredType(parameterType);
-  const parameterTypeName = parameterType.getText();
-
-  const returnType = handleMethod.getReturnType();
-  tracker?.encounteredType(returnType);
-  const returnTypeName = returnType.getText();
-
   return {
-    parameter: {
-      type: parameterTypeName
-    },
-    return: {
-      type: returnTypeName
-    }
+    parameter: parameter.getType(),
+    return: handleMethod.getReturnType()
   }
 }

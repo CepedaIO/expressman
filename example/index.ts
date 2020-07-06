@@ -9,5 +9,5 @@ publish(app, {
 });
 
 app.listen(8000, () => {
-  console.log('Expressions example server started');
+  console.log('Expressman\'s example server started');
 });

@@ -7,9 +7,10 @@
   "scripts": {
     "test": "ts-mocha -r reflect-metadata src/**/**/*.specs.ts",
     "dev": "ts-node-dev example/index.ts",
-    "playground": "ts-node-dev example/playground.ts",
-    "build": "tsc --declaration",
-    "prepublish": "npm run build"
+    "playground":"ts-node-dev example/playground.ts",
+    "build": "tsc",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test"
   },
   "author": "Alfred Cepeda",
   "license": "ISC",
