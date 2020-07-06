@@ -3,7 +3,7 @@ import {tokens} from "../tokens";
 import {container} from "tsyringe";
 import {ManifestOptions} from "../services/Manifest";
 
-export default function ContainerMiddleware(options:ManifestOptions) {
+export default function ContainerMiddleware(options:ManifestOptions = {}) {
   return (req: Request, resp: Response, next: NextFunction) => {
     const child = container.createChildContainer();
 
