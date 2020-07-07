@@ -1,6 +1,6 @@
 import {ClassDeclaration, Type} from "ts-morph";
 import {JSONFromType} from "./JSONFromType";
-import {JSONFromClass} from "./JSONFromClass";
+import {definitionFromClass} from "./definitionFromClass";
 
 export class Tracker {
   types:Map<string, { definition:Type, json:any }> = new Map();
@@ -48,7 +48,7 @@ export class Tracker {
     if(!this.classes.has(identifier)) {
       this.classes.set(identifier, {
         definition: classDec,
-        json: JSONFromClass(classDec, this)
+        json: definitionFromClass(classDec, this)
       });
     }
   }
