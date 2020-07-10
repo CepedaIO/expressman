@@ -1,6 +1,7 @@
 import {Request, Response} from "express";
 import {inject, injectable} from "tsyringe";
 import {tokens} from "../tokens";
+import {IChildContainer} from "../types";
 
 @injectable()
 export default class Context<ContainerT> {

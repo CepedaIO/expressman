@@ -1,13 +1,13 @@
 import 'reflect-metadata';
-import { publish } from '../src';
+import { publish } from 'expressman';
 import express = require('express');
 
 const app = express();
 
 publish(app, {
-  routeDir:'example/routes'
-}).then(() => {
-  app.listen(8000, () => {
+  routeDir:'src/routes'
+}).then((result) => {
+  app.listen(8080, () => {
     console.log('Expressman\'s example server started');
   });
 });

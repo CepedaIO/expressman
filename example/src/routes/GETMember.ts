@@ -1,7 +1,12 @@
-import {Route} from "../../src/decorators";
+import {GET} from "expressman";
 import MemberService from "../services/MemberService";
+import {Member} from "../repositories/MemberRepository";
 
-@Route('GET', '/members')
+export interface MemberIdentifier {
+  id: string;
+}
+
+@GET('/members')
 export default class GETMember {
   constructor(
     private memberService:MemberService

@@ -1,29 +1,29 @@
-interface Newable<T> {
+export interface Newable<T> {
   new (...args: any[]): T;
 }
 
-interface IContainer<ContainerT> {
+export interface IContainer<ContainerT> {
   bindValue<T>(token:Newable<T> | symbol, value:T);
   resolve<T>(token:Newable<T> | symbol);
 }
 
-type IChildContainer<ContainerT> = IContainer<ContainerT>;
+export type IChildContainer<ContainerT> = IContainer<ContainerT>;
 
-interface IParentContainer<ContainerT> extends IContainer<ContainerT> {
+export interface IParentContainer<ContainerT> extends IContainer<ContainerT> {
   create():IChildContainer<ContainerT>;
 }
 
-interface IHTTPResponse<U> {
+export interface IHTTPResponse<U> {
   statusCode?: number;
   contentType?: string;
   body: U;
 }
 
-interface RouteHandlerConstructor {
+export interface RouteHandlerConstructor {
   new (...args: any[]): IRouteHandler
 }
 
-interface IRouteHandler {
+export interface IRouteHandler {
   catch?(err:Error): any;
   handle(payload:any): any;
 }

@@ -1,5 +1,6 @@
 import {RouteHandlerConstructor} from "../models/IRouteHandler";
 import Manifest from "../services/Manifest";
+import {RouteHandlerConstructor} from "../types";
 
 export function Before(...handlers:RouteHandlerConstructor[]) {
   return (target:RouteHandlerConstructor) => {

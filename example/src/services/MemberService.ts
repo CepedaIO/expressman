@@ -1,4 +1,4 @@
-import MemberRepository from "../repositories/MemberRepository";
+import MemberRepository, {Member} from "../repositories/MemberRepository";
 import {injectable} from "tsyringe";
 
 @injectable()
@@ -7,7 +7,7 @@ export default class MemberService {
     private memberRepository:MemberRepository
   ) { }
 
-  getActiveMembers():Member {
-    return this.memberRepository.getMembers()[0];
+  getActiveMembers():Member[] {
+    return this.memberRepository.getMembers();
   }
 }

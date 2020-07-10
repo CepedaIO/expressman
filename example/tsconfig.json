@@ -10,14 +10,18 @@
     "esModuleInterop": true,
     "strictNullChecks": true,
     "moduleResolution": "node",
-    "rootDir": "./src",
+    "rootDirs": [
+      "./src",
+      "./../src"
+    ],
     "outDir": "./dist",
     "lib": ["esnext"]
   },
+  "files": [
+    "./../src/types.d.ts"
+  ],
   "exclude": [
-    "example",
     "node_modules",
-    "dist",
-    "src/tests"
+    "dist"
   ]
 }

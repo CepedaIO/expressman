@@ -6,6 +6,7 @@ import {Route} from "../decorators";
 import {Response} from "express";
 import tokens from "../tokens";
 import Manifest from "./Manifest";
+import {IHTTPResponse, IRouteHandler} from "../types";
 
 describe('publish', function() {
   this.timeout(0);

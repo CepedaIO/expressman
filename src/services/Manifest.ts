@@ -4,6 +4,8 @@ import {RouteHandlerConstructor} from "../models/IRouteHandler";
 import {allMiddlewareFromHandler} from "./allMiddlewareFromHandler";
 import {SendResponseMiddleware} from "../middleware/SendResponseMiddleware";
 import DependencyContainer from "tsyringe/dist/typings/types/dependency-container";
+import {container} from "tsyringe";
+import {IParentContainer, RouteHandlerConstructor} from "../types";
 
 export type Middleware = RequestHandler | Array<RequestHandler>;
 

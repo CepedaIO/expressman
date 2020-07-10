@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import Manifest, {Middleware} from "./Manifest";
 import { flatten } from 'lodash';
+import {RouteHandlerConstructor} from "../types";
 
 function middlewareFromHandler(constructor:RouteHandlerConstructor, onResult?: (result:any, resp:Response) => void): Middleware {
   return async (req:Request, resp:Response, next:NextFunction) => {
