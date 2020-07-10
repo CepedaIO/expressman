@@ -48,7 +48,7 @@ export class Tracker {
     if(!this.classes.has(identifier)) {
       this.classes.set(identifier, {
         definition: classDec,
-        json: definitionFromClass(classDec, this)
+        json: definitionFromClass(classDec)
       });
     }
   }

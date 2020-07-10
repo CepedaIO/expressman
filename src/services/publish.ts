@@ -9,13 +9,14 @@ interface PublishOptions {
 }
 
 export function publish<U>(app:Application, options:PublishOptions) {
-  Manifest.generateRoutes(app);
-
-  glob(`${options.routeDir}/**/*.ts`, options, (err, _files) => {
-    const files = _files.map(file => resolve(file));
-    const tracker = trackerFromFiles(files);
-    files.forEach(file => require(file));
-
-    debugger;
+  return new Promise((resolve, reject) => {
+    glob(`${process.cwd()}/${options.routeDir}/**/*.ts`, (err, files) => {
+      if(err) reject(err);
+      files.forEach(file => require(file));
+      Manifest.generateRoutes(app, options);
+      resolve({
+        app, files
+      });
+    });
   });
 }

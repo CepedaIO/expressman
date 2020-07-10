@@ -6,8 +6,8 @@ const app = express();
 
 publish(app, {
   routeDir:'example/routes'
-});
-
-app.listen(8000, () => {
-  console.log('Expressman\'s example server started');
+}).then(() => {
+  app.listen(8000, () => {
+    console.log('Expressman\'s example server started');
+  });
 });
