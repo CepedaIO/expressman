@@ -1,6 +1,5 @@
-import {resolve} from "path";
-import {Application} from "express";
-import glob from 'glob';
+import {Application, Request, Response} from "express";
+import glob = require("glob");
 import Manifest from "./Manifest";
 import {trackerFromFiles} from "./DeclarationParser/trackerFromFiles";
 
