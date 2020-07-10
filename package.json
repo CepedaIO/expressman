@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "glob": "^7.1.6",
+    "lodash": "^4.17.19",
     "lodash.flatten": "^4.4.0",
     "tsyringe": "^4.3.0"
   },
