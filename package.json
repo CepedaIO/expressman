@@ -1,13 +1,13 @@
 {
   "name": "expressman",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Yet another wrapper around Express",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "ts-mocha -r reflect-metadata src/**/**/*.specs.ts",
     "dev": "ts-node-dev example/index.ts",
-    "playground":"ts-node-dev example/playground.ts",
+    "playground": "ts-node-dev example/playground.ts",
     "build": "tsc",
     "prepare": "npm run build",
     "prepublishOnly": "npm test"
