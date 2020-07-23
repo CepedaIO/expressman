@@ -4,7 +4,8 @@ import Manifest from "./Manifest";
 import {trackerFromFiles} from "./DeclarationParser/trackerFromFiles";
 
 interface PublishOptions {
-  routeDir:string;
+  routeDir: string;
+  configureContainer?(container:DependencyContainer, request:Request, response:Response);
 }
 
 interface PublishResult {
@@ -16,7 +17,7 @@ export function publish<U>(app:Application, options:PublishOptions): Promise<Pub
   return new Promise((resolve, reject) => {
     glob(`${process.cwd()}/${options.routeDir}/**/*.ts`, (err, files) => {
       if(err) reject(err);
-
+      
       files.forEach(file => require(file));
       Manifest.generateRoutes(app, options);
       resolve({

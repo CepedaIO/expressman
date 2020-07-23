@@ -6,6 +6,10 @@ export interface MemberIdentifier {
   id: string;
 }
 
+class GETMemberInput {
+
+}
+
 @GET('/members')
 export default class GETMember {
   constructor(

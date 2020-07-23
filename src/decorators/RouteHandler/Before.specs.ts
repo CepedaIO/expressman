@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import {Before} from "./Before";
-import Manifest from "../services/Manifest";
+import Manifest from "../../services/Manifest";
 import {Route} from "./Route";
 
 describe('Before', function() {

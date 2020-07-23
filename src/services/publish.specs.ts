@@ -2,7 +2,7 @@ import request = require('supertest');
 import express = require('express');
 import { expect } from 'chai';
 import {inject} from 'tsyringe';
-import {Route} from "../decorators";
+import {Route} from "../decorators/RouteHandler";
 import {Response} from "express";
 import tokens from "../tokens";
 import Manifest from "./Manifest";

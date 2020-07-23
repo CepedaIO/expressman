@@ -13,8 +13,8 @@ export default function ContainerMiddleware(options:ManifestOptions = {}) {
 
     resp.locals.container = child;
 
-    if(options.prehandle) {
-      options.prehandle(child, req, resp);
+    if(options.configureContainer) {
+      options.configureContainer(child, req, resp);
     }
 
     next();

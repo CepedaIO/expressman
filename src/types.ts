@@ -1,3 +1,5 @@
+import {MapOptions} from "./decorators/IncomingModel/Map";
+
 export interface Newable<T> {
   new (...args: any[]): T;
 }
@@ -27,3 +29,12 @@ export interface IRouteHandler {
   catch?(err:Error): any;
   handle(payload:any): any;
 }
+
+export interface PropertyMapOptions<InputType = string>{
+  path:string;
+  options:MapOptions<InputType>
+}
+
+export type InputMap = {
+  [propertyName:string]:PropertyMapOptions<any>
+};

@@ -1,6 +1,5 @@
-import {RouteHandlerConstructor} from "../models/IRouteHandler";
-import Manifest from "../services/Manifest";
-import {RouteHandlerConstructor} from "../types";
+import Manifest from "../../services/Manifest";
+import {RouteHandlerConstructor} from "../../types";
 
 export function After(...handlers:RouteHandlerConstructor[]) {
   return (target:RouteHandlerConstructor) => {

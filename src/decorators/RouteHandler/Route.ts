@@ -1,7 +1,6 @@
-import Manifest from "../services/Manifest";
-import {RouteHandlerConstructor} from "../models/IRouteHandler";
+import Manifest from "../../services/Manifest";
 import {injectable} from "tsyringe";
-import {RouteHandlerConstructor} from "../types";
+import {RouteHandlerConstructor} from "../../types";
 
 export function Route(method:string, path:string) {
   return (target:RouteHandlerConstructor) => {
