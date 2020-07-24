@@ -4,7 +4,7 @@ import { get } from "lodash";
 
 export async function payloadFromMap(request:Request, inputMap:InputMap) {
   const payload = {};
-  const errors:Error[]   = [];
+  const errors:{ [propertyKey:string]:Error } = {};
 
   const promises = Object.entries(inputMap).map(async ([propertyKey, propertyMap]) => {
     const value = get(request, propertyMap.path);
@@ -21,7 +21,7 @@ export async function payloadFromMap(request:Request, inputMap:InputMap) {
         try {
           await propertyMap.options.validate(value, transformed);
         } catch(err) {
-          errors.push(err);
+          errors[propertyMap.path.join('.')] = err;
         }
       }
     } else {

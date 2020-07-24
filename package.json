@@ -17,6 +17,7 @@
     "glob": "^7.1.6",
     "lodash.flatten": "^4.4.0",
     "lodash.get": "^4.4.2",
+    "lodash.kebabcase": "^4.1.1",
     "ts-morph": "^7.1.1",
     "tsyringe": "^4.3.0"
   },

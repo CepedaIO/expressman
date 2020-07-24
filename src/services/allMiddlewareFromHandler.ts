@@ -2,8 +2,7 @@ import {NextFunction, Request, Response} from "express";
 import Manifest, {Middleware} from "./Manifest";
 import { flatten } from 'lodash';
 import {RouteHandlerConstructor} from "../types";
-import {payloadFromMap} from "./payloadFromMap";
-import {constructor} from "tsyringe/dist/typings/types";
+import {payloadFromMap} from "./payloadFromMap"
 
 async function getPayload(constructor:RouteHandlerConstructor, req:Request) {
   const inputMap = Manifest.getInputMap(constructor);
@@ -14,7 +13,7 @@ async function getPayload(constructor:RouteHandlerConstructor, req:Request) {
   const result = await payloadFromMap(req, inputMap);
   const InputClass = Manifest.getInputClass(constructor)!;
   return {
-    payload: new InputClass(result.payload),
+    payload: Object.assign(new InputClass(), result.payload),
     errors: result.errors
   };
 }
