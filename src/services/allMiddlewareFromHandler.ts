@@ -10,11 +10,12 @@ async function getPayload(constructor:RouteHandlerConstructor, req:Request) {
     return { payload:req.body, errors:[] };
   }
 
-  const result = await payloadFromMap(req, inputMap);
+  const {payload, errors, valid} = await payloadFromMap(req, inputMap);
   const InputClass = Manifest.getInputClass(constructor)!;
   return {
-    payload: Object.assign(new InputClass(), result.payload),
-    errors: result.errors
+    payload: Object.assign(new InputClass(), payload),
+    errors,
+    valid
   };
 }
 
@@ -25,12 +26,13 @@ function middlewareFromHandler(constructor:RouteHandlerConstructor, onResult?: (
     const handler = container.resolve(constructor);
 
     try {
-      const { payload, errors } = await getPayload(constructor, req);
+      const { payload, errors, valid } = await getPayload(constructor, req);
       resp.locals['$payload'] = payload;
       resp.locals['$validationErrors'] = errors;
+      resp.locals['$valid'] = valid;
 
-      if(errors.length > 0) {
-        next(errors);
+      if(!valid) {
+        next(JSON.stringify(errors));
       }
 
       const result = await handler.handle(payload);
