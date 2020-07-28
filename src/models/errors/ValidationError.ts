@@ -1,5 +1,5 @@
-import {ExpectedError} from "./ExpectedError";
+import {APIError} from "./APIError";
 
-export class ValidationError extends ExpectedError {
+export class ValidationError extends APIError {
   statusCode = 400;
 }

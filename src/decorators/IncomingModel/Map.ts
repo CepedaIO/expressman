@@ -1,12 +1,12 @@
 import Manifest from "../../services/Manifest";
 import { kebabCase } from 'lodash';
 
-export interface MapOptions<InputType = any, TransformType = any> {
-  transform?(input:InputType): TransformType;
-  validate?(input:InputType): void | Promise<void>;
+export interface MapOptions {
+  transform?(input:any): any;
+  validate?(input:any): any;
 }
 
-export function Map<InputType = string>(path:string[], options:MapOptions<InputType> = {}) {
+export function Map(path:string[], options:MapOptions = {}) {
   return (target:any, propertyKey: string) => {
     if(path.length === 1) {
       path.push(kebabCase(propertyKey));
@@ -15,9 +15,9 @@ export function Map<InputType = string>(path:string[], options:MapOptions<InputT
     Manifest.recordMap(target.constructor, propertyKey, { path, options });
   }
 }
-function createMap<InputType = string>(requestKey:string, options:MapOptions<InputType>);
-function createMap<InputType = string>(requestKey:string, key?:string, options?:MapOptions<InputType>);
-function createMap<InputType = string>(requestKey:string, key?:any, options?:any) {
+function createMap(requestKey:string, options:MapOptions);
+function createMap(requestKey:string, key?:string, options?:MapOptions);
+function createMap(requestKey:string, key?:any, options?:any) {
   const path = [requestKey];
 
   if(typeof key === 'string') {
@@ -27,32 +27,32 @@ function createMap<InputType = string>(requestKey:string, key?:any, options?:any
 
   return Map(path, key);
 }
-export function Query<InputType = string>(options?:MapOptions<InputType>);
-export function Query<InputType = string>(key:string, options?:MapOptions<InputType>);
-export function Query<InputType = string>(key?:any, options?:any) {
+export function Query(options?:MapOptions);
+export function Query(key:string, options?:MapOptions);
+export function Query(key?:any, options?:any) {
   return createMap('query', key, options);
 }
 
-export function Body<InputType = string>(options?:MapOptions<InputType>);
-export function Body<InputType = string>(key:string, options?:MapOptions<InputType>);
-export function Body<InputType = string>(key?:any, options?:any) {
+export function Body(options?:MapOptions);
+export function Body(key:string, options?:MapOptions);
+export function Body(key?:any, options?:any) {
   return createMap('body', key, options);
 }
 
-export function Header<InputType = string>(options?:MapOptions<InputType>);
-export function Header<InputType = string>(key:string, options?:MapOptions<InputType>);
-export function Header<InputType = string>(key?:any, options?:any) {
+export function Header(options?:MapOptions);
+export function Header(key:string, options?:MapOptions);
+export function Header(key?:any, options?:any) {
   return createMap('headers', key, options);
 }
 
-export function Cookie<InputType = string>(options?:MapOptions<InputType>);
-export function Cookie<InputType = string>(key:string, options?:MapOptions<InputType>);
-export function Cookie<InputType = string>(key?:any, options?:any) {
+export function Cookie(options?:MapOptions);
+export function Cookie(key:string, options?:MapOptions);
+export function Cookie(key?:any, options?:any) {
   return createMap('cookies', key, options);
 }
 
-export function Param<InputType = string>(options?:MapOptions<InputType>);
-export function Param<InputType = string>(key:string, options?:MapOptions<InputType>);
-export function Param<InputType = string>(key?:any, options?:any) {
+export function Param(options?:MapOptions);
+export function Param(key:string, options?:MapOptions);
+export function Param(key?:any, options?:any) {
   return createMap('params', key, options);
 }

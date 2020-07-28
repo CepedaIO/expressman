@@ -4,14 +4,14 @@ import {GET, Input, Header, Query} from "../../../src";
 
 class GETMembersInput {
   @Query({
-    validate(input: any): void | Promise<void> {
+    validate(input) {
       if(isNaN(input) || input < 5) throw new Error('Limit must be a number greater than five');
     }
   })
   limit:number;
 
   @Query({
-    validate(input: any): void | Promise<void> {
+    validate(input: any) {
       if(isNaN(input) || input < 5) throw new Error('Skip must be a number greater than five');
     }
   })

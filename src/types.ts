@@ -49,4 +49,4 @@ export interface JSON {
 
 export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
 export type Require<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
-export type APIError = Error | Error[] | Pairs<Error | Error[]>;
+export type HandlerError = Error | Error[] | Pairs<Error | Error[]>;
