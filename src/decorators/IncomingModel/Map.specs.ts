@@ -5,10 +5,10 @@ import Manifest from "../../services/Manifest";
 describe('Map', function() {
   it('should record map metadata', function() {
     class CUT {
-      @Map('body.first-name')
+      @Map(['body', 'first-name'])
       firstname: string;
     }
 
-    expect(Manifest.map.get(CUT)!['firstname'].path).to.equal('body.first-name');
+    expect(Manifest.map.get(CUT)!['firstname'].path).to.deep.equal(['body', 'first-name']);
   });
 });

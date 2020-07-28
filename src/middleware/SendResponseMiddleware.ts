@@ -9,6 +9,6 @@ export function SendResponseMiddleware(req:Request, resp:Response, next:NextFunc
       .send(result.body || result);
   }
 
-  next();
+  return next();
 }
 

@@ -17,7 +17,6 @@ export default function ContainerMiddleware(options:ManifestOptions = {}) {
       options.configureContainer(child, req, resp);
     }
 
-    next();
-    return child;
+    return next();
   };
 }

@@ -1,10 +1,10 @@
 import {Application, Request, RequestHandler, Response} from "express";
 import ContainerMiddleware from "../middleware/ContainerMiddleware";
-import {RouteHandlerConstructor} from "../models/IRouteHandler";
-import {allMiddlewareFromHandler} from "./allMiddlewareFromHandler";
+import {middlewareFromHandler} from "./middlewareFromHandler";
 import {SendResponseMiddleware} from "../middleware/SendResponseMiddleware";
 import DependencyContainer from "tsyringe/dist/typings/types/dependency-container";
 import {InputMap, IParentContainer, Newable, PropertyMapOptions, RouteHandlerConstructor} from "../types";
+import {ErrorMiddleware} from "../middleware/ErrorMiddleware";
 
 export type Middleware = RequestHandler | Array<RequestHandler>;
 
@@ -57,10 +57,11 @@ class Manifest {
 
     this.route.forEach(entry => {
       const method = entry.method.toLowerCase();
-      app[method](entry.path, allMiddlewareFromHandler(entry.target));
+      app[method](entry.path, middlewareFromHandler(entry.target));
     });
 
     app.use(SendResponseMiddleware);
+    app.use(ErrorMiddleware);
   }
 
   getInputClass(constructor:RouteHandlerConstructor): Newable<any> | undefined {

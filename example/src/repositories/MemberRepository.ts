@@ -1,4 +1,4 @@
-import {injectable} from "expressman";
+import {injectable} from "../../../src";
 
 export interface Member {
   firstname:string;

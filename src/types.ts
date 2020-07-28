@@ -38,3 +38,15 @@ export interface PropertyMapOptions<InputType = string>{
 export type InputMap = {
   [propertyName:string]:PropertyMapOptions<any>
 };
+
+export type Pairs<ValueType = string | number, KeyType extends string | number = string,> = {
+  [key in string | number]: ValueType;
+};
+
+export interface JSON {
+  [key:string]: string | number | JSON;
+}
+
+export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
+export type Require<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
+export type APIError = Error | Error[] | Pairs<Error | Error[]>;

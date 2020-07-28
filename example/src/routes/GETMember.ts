@@ -3,7 +3,11 @@ import {Member} from "../repositories/MemberRepository";
 import {GET, Input, Header, Query} from "../../../src";
 
 class GETMembersInput {
-  @Query()
+  @Query({
+    validate(input: any): void | Promise<void> {
+      if(isNaN(input) || input < 5) throw new Error('Limit must be a number greater than five');
+    }
+  })
   limit:number;
 
   @Query({
@@ -25,7 +29,6 @@ export default class GETMember {
   ) { }
 
   handle(payload:GETMembersInput): Member {
-    debugger;
     return this.memberService.getActiveMembers()[0];
   }
 }
