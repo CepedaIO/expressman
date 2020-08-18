@@ -32,7 +32,7 @@ export interface IRouteHandler {
 
 export interface PropertyMapOptions<InputType = string>{
   path:string[];
-  options:MapOptions<InputType>
+  options:MapOptions
 }
 
 export type InputMap = {
