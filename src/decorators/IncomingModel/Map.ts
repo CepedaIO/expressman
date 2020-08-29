@@ -1,9 +1,25 @@
 import Manifest from "../../services/Manifest";
 import { kebabCase } from 'lodash';
+ 
+export type PremadeValidationRule = (overrides?:ValidationRuleModifiers) => ValidationRule;
+export type PremadeValidationRuleFactory = (...args:any[]) => PremadeValidationRule;
+
+export interface ValidationRuleModifiers {
+  label:string,
+  reject?(input:any):any
+}
+
+export interface ValidationRule {
+  modifiers?:ValidationRuleModifiers,
+  valid(input:any):boolean,
+  reject(input:any, label:string):any
+}
 
 export interface MapOptions {
-  transform?(input:any): any;
-  validate?(input:any): any;
+  default?:any,
+  optional?:boolean,
+  transform?(input:any): any,
+  validate?:Array<ValidationRule | PremadeValidationRule>
 }
 
 export function Map(path:string[], options:MapOptions = {}) {
