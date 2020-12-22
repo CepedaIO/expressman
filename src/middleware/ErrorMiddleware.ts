@@ -1,40 +1,60 @@
 import {NextFunction, Request, Response} from "express";
-import {APIResponse} from "../models/APIResponse";
 import {transformResponse} from "../services/transformResponse";
 import {APIError} from "../models/errors/APIError";
 import {HandlerError} from "../types";
+import DependencyContainer from "tsyringe/dist/typings/types/dependency-container";
 
 function payloadFromError(err:HandlerError) {
   if(Array.isArray(err)) {
-    return err.map(error => payloadFromError(error));
+    return {
+      errors: err.map(error => payloadFromError(error))
+    };
   }
 
   if(err instanceof Error) {
-    return err.message;
+    return {
+      message: err.message,
+      stack: err.stack?.split('\n')
+    };
   }
 
-  return Object.entries(err).reduce((result, [key, error]) => {
-    result[key] = payloadFromError(error);
-    return result;
-  }, {});
+  if(typeof err === 'object') {
+    const fields = Object.entries(err).reduce((result, [key, error]) => {
+      result[key] = payloadFromError(error);
+      return result;
+    }, {});
+
+    return {
+      fields
+    };
+  }
+
+  return err;
 }
 
-export function ErrorMiddleware(err:any, request:Request, response:Response, next:NextFunction) {
-  if(err instanceof Error) {
-    //Change to an unexpected error to be handled immediately
-    err = new APIError({ payload:err });
-  }
+function sendAPIError(response:Response, err:any) {
+  const apiError = err instanceof APIError ? err : new APIError({ payload: err });
+  transformResponse(response, apiError);
+  let payload = payloadFromError(apiError.payload);
+  response.send(payload);
+}
 
-  if(err instanceof APIResponse) {
-    transformResponse(response, err);
+export function ErrorMiddleware(onUncaughtException?:(container: DependencyContainer, error:APIError) => Promise<any>) {
+  return async (err:any, request:Request, response:Response, next:NextFunction) => {
+    let overrideError;
+    debugger;
 
-    if(err instanceof APIError) {
-      const payload = payloadFromError(err.payload);
-      response.send(payload);
-    } else {
-      response.send(err.payload);
+    if(onUncaughtException) {
+      const container = response.locals.container;
+      overrideError = await onUncaughtException(container, err);
     }
-  }
 
-  return next(err);
+    if(!overrideError) {
+      sendAPIError(response, overrideError);
+    } else {
+      sendAPIError(response, err);
+    }
+
+    next(err);
+  };
 }

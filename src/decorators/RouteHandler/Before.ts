@@ -1,7 +1,7 @@
 import Manifest from "../../services/Manifest";
-import {RouteHandlerConstructor} from "../../types";
+import {Middleware, RouteHandlerConstructor} from "../../types";
 
-export function Before(...handlers:RouteHandlerConstructor[]) {
+export function Before(...handlers:Array<Middleware>) {
   return (target:RouteHandlerConstructor) => {
     Manifest.recordBefore(target, handlers);
   }

@@ -1,6 +1,6 @@
 import {Request} from "express";
 import {InputMap, Pairs} from "../types";
-import { get, capitalize, isFunction, reject } from "lodash";
+import { get, isFunction } from "lodash";
 
 export async function payloadFromMap(request:Request, inputMap:InputMap) {
   let valid = true;
@@ -8,7 +8,13 @@ export async function payloadFromMap(request:Request, inputMap:InputMap) {
   const errorPairs:Pairs<Error> = {};
 
   const promises = Object.entries(inputMap).map(async ([propertyKey, propertyMap]) => {
-    const value = get(request, propertyMap.path);
+    let value = get(request, propertyMap.path);
+    if(value === undefined || value === null) {
+      if(propertyMap.options.default !== undefined) {
+        value = propertyMap.options.default;
+      }
+    }
+
 
     if(propertyMap.options) {
       if(propertyMap.options.validate) {
@@ -20,11 +26,8 @@ export async function payloadFromMap(request:Request, inputMap:InputMap) {
             const reject = validateRule.modifiers?.reject || validateRule.reject;
 
             if(previousResult === true) {
-              let input = value;
               if(typeof value === 'undefined' || value === null) {
-                if(propertyMap.options.default) {
-                  input = propertyMap.options.default;
-                } else if(propertyMap.options.optional === true) {
+                if(propertyMap.options.optional === true) {
                   return true;
                 } else {
                   return { reject:reject(value, label) };
@@ -44,14 +47,15 @@ export async function payloadFromMap(request:Request, inputMap:InputMap) {
         });
 
         const result = await validateTail;
-        
+
         if(result !== true) {
           valid = false;
           errorPairs[propertyMap.path.join('.')] = result.reject;
         }
       }
 
-      payload[propertyKey] = propertyMap.options.transform && valid == true ? propertyMap.options.transform(value) : value;
+      debugger;
+      payload[propertyKey] = propertyMap.options.transform && valid ? propertyMap.options.transform(value) : value;
     } else {
       payload[propertyKey] = value;
     }

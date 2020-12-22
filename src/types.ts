@@ -1,4 +1,6 @@
 import {MapOptions} from "./decorators";
+import {RequestHandler} from "express";
+import DependencyContainer from "tsyringe/dist/typings/types/dependency-container";
 
 export interface Newable<T> {
   new (...args: any[]): T;
@@ -36,7 +38,7 @@ export interface PropertyMapOptions<InputType = string>{
 }
 
 export type InputMap = {
-  [propertyName:string]:PropertyMapOptions<any>
+  [propertyName:string]:PropertyMapOptions<any>;
 };
 
 export type Pairs<ValueType = string | number, KeyType extends string | number = string,> = {
@@ -50,3 +52,5 @@ export interface JSON {
 export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
 export type Require<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
 export type HandlerError = Error | Error[] | Pairs<Error | Error[]>;
+export type Middleware = RouteHandlerConstructor | RequestHandler;
+export type Wrapperware = (container: DependencyContainer, next: () => Promise<any>) => Promise<any>;

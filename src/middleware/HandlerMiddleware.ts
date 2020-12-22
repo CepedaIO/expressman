@@ -1,13 +1,14 @@
-import {RouteHandlerConstructor} from "../types";
-import {NextFunction, Request, Response} from "express";
-import Manifest, {Middleware} from "../services/Manifest";
+import {RouteHandlerConstructor, Wrapperware} from "../types";
+import {NextFunction, Request, RequestHandler, Response} from "express";
+import Manifest from "../services/Manifest";
 import {payloadFromMap} from "../services/payloadFromMap";
 import {ValidationError} from "../models/errors/ValidationError";
+import DependencyContainer from "tsyringe/dist/typings/types/dependency-container";
 
 async function getPayload(constructor:RouteHandlerConstructor, req:Request) {
   const inputMap = Manifest.getInputMap(constructor);
   if(!inputMap) {
-    return { payload:req.body, errors:[] };
+    return { payload:req.body, errors:[], valid: true };
   }
 
   const {payload, errorPairs, valid} = await payloadFromMap(req, inputMap);
@@ -23,12 +24,12 @@ async function getPayload(constructor:RouteHandlerConstructor, req:Request) {
   };
 }
 
-export function HandlerMiddleware(constructor:RouteHandlerConstructor, onResult?: (result:any, resp:Response) => void): Middleware {
-  return async (req:Request, resp:Response, next:NextFunction) => {
-    const container = resp.locals.container;
-    const handler = container.resolve(constructor);
+export function HandlerMiddleware(constructor:RouteHandlerConstructor, wrappers?: Array<Wrapperware>, onResult?: (result:any, resp:Response) => void): RequestHandler {
+  let handler;
 
+  return async (req:Request, resp:Response, next:NextFunction) => {
     try {
+      const container = resp.locals.container;
       const { payload, error, valid } = await getPayload(constructor, req);
       resp.locals['$payload'] = payload;
       resp.locals['$validationError'] = error;
@@ -38,10 +39,20 @@ export function HandlerMiddleware(constructor:RouteHandlerConstructor, onResult?
         return next(error);
       }
 
-      const result = await handler.handle(payload);
-      resp.locals[constructor.name] = result;
-      onResult && onResult(result, resp);
-      return next();
+      const action = async () => {
+        handler = container.resolve(constructor);
+        const result = await handler.handle(payload);
+        resp.locals[constructor.name] = result;
+        onResult && onResult(result, resp);
+        return next();
+      }
+
+      if(wrappers) {
+        const wrappedAction = wrap(container, action, wrappers);
+        return wrappedAction();
+      } else {
+        return action();
+      }
     } catch(err) {
       if(handler.catch) {
         try {
@@ -57,4 +68,12 @@ export function HandlerMiddleware(constructor:RouteHandlerConstructor, onResult?
       }
     }
   }
+}
+
+function wrap(container: DependencyContainer, initiator: () => Promise<any>, wrappers: Array<Wrapperware>): () => Promise<any> {
+  return wrappers.reduce((previousCaller, wrapper) => {
+    return async () => {
+      await wrapper(container, previousCaller as () => Promise<any>);
+    };
+  }, initiator) as () => Promise<any>;
 }
