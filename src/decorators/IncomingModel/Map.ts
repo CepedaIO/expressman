@@ -1,8 +1,7 @@
 import Manifest from "../../services/Manifest";
 import { kebabCase } from 'lodash';
- 
+
 export type PremadeValidationRule = (overrides?:ValidationRuleModifiers) => ValidationRule;
-export type PremadeValidationRuleFactory = (...args:any[]) => PremadeValidationRule;
 
 export interface ValidationRuleModifiers {
   label:string,
@@ -19,11 +18,13 @@ export interface MapOptions {
   default?:any,
   optional?:boolean,
   transform?(input:any): any,
-  validate?:Array<ValidationRule | PremadeValidationRule>
+  validate?:Array<PremadeValidationRule>
 }
 
 export function Map(path:string[], options:MapOptions = {}) {
   return (target:any, propertyKey: string) => {
+    console.log(Reflect.getMetadata('design:type', target, propertyKey));
+
     if(path.length === 1) {
       path.push(kebabCase(propertyKey));
     }

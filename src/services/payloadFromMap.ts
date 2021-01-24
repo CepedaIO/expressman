@@ -1,6 +1,6 @@
 import {Request} from "express";
 import {InputMap, Pairs} from "../types";
-import { get, isFunction } from "lodash";
+import { get } from "lodash";
 
 export async function payloadFromMap(request:Request, inputMap:InputMap) {
   let valid = true;
@@ -15,13 +15,12 @@ export async function payloadFromMap(request:Request, inputMap:InputMap) {
       }
     }
 
-
     if(propertyMap.options) {
       if(propertyMap.options.validate) {
         let validateTail:Promise<true | { reject:any }> = Promise.resolve(true);
         propertyMap.options.validate.forEach((rule) => {
           validateTail = validateTail.then(async (previousResult) => {
-            const validateRule = isFunction(rule) ? rule() : rule;
+            const validateRule = rule();
             const label = validateRule.modifiers?.label || propertyKey;
             const reject = validateRule.modifiers?.reject || validateRule.reject;
 
@@ -54,7 +53,6 @@ export async function payloadFromMap(request:Request, inputMap:InputMap) {
         }
       }
 
-      debugger;
       payload[propertyKey] = propertyMap.options.transform && valid ? propertyMap.options.transform(value) : value;
     } else {
       payload[propertyKey] = value;

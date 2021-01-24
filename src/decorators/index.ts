@@ -1,2 +1,2 @@
-export * from "./IncomingModel/Map";
+export * from "./IncomingModel";
 export * from "./RouteHandler";

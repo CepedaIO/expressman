@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 export * from "tsyringe";
 export * from "./decorators";
 export * from "./services/publish";
