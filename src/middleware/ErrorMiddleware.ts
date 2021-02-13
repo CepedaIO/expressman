@@ -33,7 +33,15 @@ function payloadFromError(err:HandlerError) {
 }
 
 function sendAPIError(response:Response, err:any) {
-  const apiError = err instanceof APIError ? err : new APIError({ payload: err });
+  let apiError;
+  
+  if(err instanceof  APIError) {
+    apiError = err;
+  } else {
+    apiError = new APIError();
+    apiError.payload = err;
+  }
+  
   transformResponse(response, apiError);
   let payload = payloadFromError(apiError.payload);
   response.send(payload);

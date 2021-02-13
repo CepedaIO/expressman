@@ -1,8 +1,8 @@
-import Manifest from "../../services/Manifest";
-import {Middleware, RouteHandlerConstructor} from "../../types";
+import {Middleware} from "../../types";
+import RouteMetadata from "../../services/RouteMetadata";
 
-export function After(...handlers:Array<Middleware>) {
-  return (target:RouteHandlerConstructor) => {
-    Manifest.recordAfter(target, handlers);
+export function After(...middleware:Array<Middleware>) {
+  return (target:any, property: string) => {
+    RouteMetadata.setAfter(target, property, middleware);
   }
 }

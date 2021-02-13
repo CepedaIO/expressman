@@ -1,20 +1,20 @@
 import { expect } from "chai";
 import {Map} from "./Map";
-import Manifest from "../../services/Manifest";
+import InputMetadata from "../../services/InputMetadata";
 
 interface iTest {
   firstname:string;
   lastname:string;
 }
 
-describe.only('Map', function() {
-  it.only('should record map metadata', function() {
+describe('Map', function() {
+  it('should record map metadata', function() {
     class CUT {
       @Map(['body', 'first-name'])
       firstname: iTest;
     }
-
-    expect(Manifest.map.get(CUT)!['firstname'].path).to.deep.equal(['body', 'first-name']);
+    
+    expect(InputMetadata.get(CUT)!.propertyMap['firstname']!.path).to.deep.equal(['body', 'first-name']);
   });
 
   it('should record map metadata', function() {
@@ -22,7 +22,8 @@ describe.only('Map', function() {
       @Map(['body', 'first-name'])
       firstname: string;
     }
-
-    expect(Manifest.map.get(CUT)!['firstname'].path).to.deep.equal(['body', 'first-name']);
+  
+    InputMetadata.get(CUT)
+    expect(InputMetadata.get(CUT)!.propertyMap['firstname']!.path).to.deep.equal(['body', 'first-name']);
   });
 });

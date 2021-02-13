@@ -1,6 +1,6 @@
 import {Application, Request, Response} from "express";
 import glob = require("glob");
-import Manifest from "./Manifest";
+import Manifest from "./RouteMetadata";
 import DependencyContainer from "tsyringe/dist/typings/types/dependency-container";
 import {Middleware} from "../types";
 

@@ -1,5 +1,6 @@
-import Manifest from "../../services/Manifest";
 import { kebabCase } from 'lodash';
+import InputMetadata from "../../services/InputMetadata";
+import {AnyNewable} from "../../types";
 
 export type PremadeValidationRule = (overrides?:ValidationRuleModifiers) => ValidationRule;
 
@@ -23,13 +24,11 @@ export interface MapOptions {
 
 export function Map(path:string[], options:MapOptions = {}) {
   return (target:any, propertyKey: string) => {
-    console.log(Reflect.getMetadata('design:type', target, propertyKey));
-
     if(path.length === 1) {
       path.push(kebabCase(propertyKey));
     }
 
-    Manifest.recordMap(target.constructor, propertyKey, { path, options });
+    InputMetadata.createMap(target.constructor, propertyKey, path, options);
   }
 }
 function createMap(requestKey:string, options:MapOptions);

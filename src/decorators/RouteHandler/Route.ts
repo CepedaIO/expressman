@@ -1,11 +1,13 @@
-import Manifest from "../../services/Manifest";
 import {injectable} from "tsyringe";
-import {RouteHandlerConstructor} from "../../types";
+import RouteMetadata from "../../services/RouteMetadata";
 
 export function Route(method:string, path:string) {
-  return (target:RouteHandlerConstructor) => {
-    injectable()(target);
-    Manifest.recordRoute(target, method, path);
+  return (target:any, property:string) => {
+    if(!RouteMetadata.has(target.constructor)) {
+      injectable()(target.constructor);
+    }
+    
+    RouteMetadata.createRoute(target.constructor, property, method, path);
   }
 }
 

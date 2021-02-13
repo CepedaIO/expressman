@@ -4,8 +4,9 @@ import { expect } from 'chai';
 import {inject} from 'tsyringe';
 import {Route} from "../decorators/RouteHandler";
 import {Response} from "express";
-import tokens from "../tokens";
-import Manifest from "./Manifest";
+import {tokens} from "../tokens";
+import {publish} from "./publish";
+import Manifest from "./RouteMetadata";
 import {IHTTPResponse, IRouteHandler} from "../types";
 
 describe('publish', function() {
@@ -17,8 +18,8 @@ describe('publish', function() {
   });
 
   it('should use the result of the handler as the content of the response', async function() {
-    @Route('GET', '/return-as-response')
     class CUT {
+      @Route('GET', '/return-as-response')
       handle() {
         return { message:'Victory!' };
       }
@@ -29,9 +30,9 @@ describe('publish', function() {
     expect(result.body.message).to.equal('Victory!');
   });
 
-  it('should use HTTPResponse class for more precise control over response', async function() {
-    @Route('GET', '/http-response-response')
+  it.only('should use HTTPResponse class for more precise control over response', async function() {
     class CUT {
+      @Route('GET', '/http-response-response')
       handle() {
         return {
           statusCode: 400,
@@ -50,12 +51,12 @@ describe('publish', function() {
   });
 
   it('should be able to use traditional request object for traditional handling', async function() {
-    @Route('GET', '/traditional-response')
     class CUT {
       constructor(
         @inject(tokens.Response) private response:Response
       ) {}
-
+  
+      @Route('GET', '/traditional-response')
       handle() {
         this.response.status(400).contentType('text/plain').send('This is simple text');
       }
@@ -70,12 +71,12 @@ describe('publish', function() {
   });
 
   it('should allow ability to handle error and return a response', async function() {
-    @Route('GET', '/traditional-response')
-    class CUT implements IRouteHandler {
+    class CUT {
       constructor(
         @inject(tokens.Response) private response:Response
       ) {}
-
+  
+      @Route('GET', '/traditional-response')
       handle() {
         throw new Error('Oh no!');
       }

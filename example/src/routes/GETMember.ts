@@ -1,20 +1,14 @@
 import MemberService from "../services/MemberService";
 import {Member} from "../repositories/MemberRepository";
-import {GET, Input, Header, Query} from "../../../src";
+import {Header} from "../../../src";
+import {Input} from "../../../src/decorators/RouteHandler/Input";
+import {GET} from "../../../src/decorators/RouteHandler/Route";
+import {Swagger} from "../../../src/decorators/Swagger/Swagger";
 
 class GETMembersInput {
-  @Query({
-    validate(input) {
-      if(isNaN(input) || input < 5) throw new Error('Limit must be a number greater than five');
-    }
-  })
-  limit:number;
 
-  @Query({
-    validate(input: any) {
-      if(isNaN(input) || input < 5) throw new Error('Skip must be a number greater than five');
-    }
-  })
+  limit:number;
+  
   skip:number;
 
   @Header()
@@ -28,6 +22,7 @@ export default class GETMember {
     private memberService:MemberService
   ) { }
 
+  @Swagger()
   handle(payload:GETMembersInput): Member {
     return this.memberService.getActiveMembers()[0];
   }

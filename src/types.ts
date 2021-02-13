@@ -1,10 +1,11 @@
 import {MapOptions} from "./decorators";
 import {RequestHandler} from "express";
-import DependencyContainer from "tsyringe/dist/typings/types/dependency-container";
+import {DependencyContainer} from "tsyringe";
 
-export interface Newable<T> {
-  new (...args: any[]): T;
+export interface Newable<InstanceType> {
+  new (...args: any[]): InstanceType;
 }
+export type AnyNewable = { new(...args: any[]): {} };
 
 export interface IContainer<ContainerT> {
   bindValue<T>(token:Newable<T> | symbol, value:T);
@@ -23,13 +24,12 @@ export interface IHTTPResponse<U> {
   body: U;
 }
 
-export interface RouteHandlerConstructor {
-  new (...args: any[]): IRouteHandler
-}
+export type RouteHandlerNewable<IPayloadType, IResponseType> = Newable<IRouteHandler<IPayloadType, IResponseType>>;
+export type AnyRouteHandlerNewable = RouteHandlerNewable<any, any>;
 
-export interface IRouteHandler {
-  catch?(err:Error): any;
-  handle(payload:any): any;
+export interface IRouteHandler<IPayload, IResponse> {
+  catch?(err:Error): IResponse;
+  handle(payload:IPayload): IResponse;
 }
 
 export interface PropertyMapOptions<InputType = string>{
@@ -52,5 +52,5 @@ export interface JSON {
 export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
 export type Require<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
 export type HandlerError = Error | Error[] | Pairs<Error | Error[]>;
-export type Middleware = RouteHandlerConstructor | RequestHandler;
+export type Middleware<IRequest = never, IResponse = never> = RequestHandler;
 export type Wrapperware = (container: DependencyContainer, next: () => Promise<any>) => Promise<any>;

@@ -1,16 +1,17 @@
 import {resolve} from "path";
 import tsconfig from "./../tsconfig.json";
-
+import "./src/routes/GETMember"
 import * as TJS from "typescript-json-schema";
+/*
 
-const file = resolve("example/routes/GETMember.ts");
-const declaration = resolve("src/types.d.ts");
-const decl = resolve("example/types.d.ts");
+const file = resolve("example/src/routes/GETMember.ts");
 const program = TJS.getProgramFromFiles(
-  [ file, declaration, decl ],
-  tsconfig.compilerOptions,
-  './example'
+  [ file ],
+  {
+    ...tsconfig.compilerOptions,
+    rootDir: './'
+  }
 );
 
-const schema = TJS.generateSchema(program, 'GETMember');
-debugger;
+const schema = TJS.generateSchema(program, 'GETMembersInput');
+*/

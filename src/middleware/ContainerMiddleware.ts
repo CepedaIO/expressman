@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction} from "express";
 import {tokens} from "../tokens";
 import {container} from "tsyringe";
-import {ManifestOptions} from "../services/Manifest";
+import {ManifestOptions} from "../services/RouteMetadata";
 
 export default function ContainerMiddleware(options:ManifestOptions = {}) {
   return (req: Request, resp: Response, next: NextFunction) => {
