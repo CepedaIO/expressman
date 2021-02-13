@@ -1,12 +1,16 @@
 import {injectable} from "tsyringe";
 import RouteMetadata from "../../services/RouteMetadata";
+import {AnyNewable} from "../../types";
+
+export function API(basePath:string) {
+  return (target:AnyNewable) => {
+    injectable()(target);
+    RouteMetadata.createAPI(target, basePath);
+  }
+}
 
 export function Route(method:string, path:string) {
   return (target:any, property:string) => {
-    if(!RouteMetadata.has(target.constructor)) {
-      injectable()(target.constructor);
-    }
-    
     RouteMetadata.createRoute(target.constructor, property, method, path);
   }
 }

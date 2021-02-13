@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "start": "tsc -w",
-    "test": "ts-mocha -r reflect-metadata src/**/**/*.specs.ts",
+    "test": "ts-mocha -r reflect-metadata 'src/**/*.specs.ts'",
     "playground": "ts-node-dev example/playground.ts",
     "build": "tsc",
     "prepare": "npm run build",

@@ -2,36 +2,37 @@ import request = require('supertest');
 import express = require('express');
 import { expect } from 'chai';
 import {inject} from 'tsyringe';
-import {Route} from "../decorators/RouteHandler";
+import {API, Route} from "../decorators";
 import {Response} from "express";
 import {tokens} from "../tokens";
 import {publish} from "./publish";
-import Manifest from "./RouteMetadata";
-import {IHTTPResponse, IRouteHandler} from "../types";
+import RouteMetadata from "./RouteMetadata";
 
 describe('publish', function() {
   this.timeout(0);
-  let app;
-
-  beforeEach(function() {
-    app = express();
-  });
 
   it('should use the result of the handler as the content of the response', async function() {
+    @API('/')
     class CUT {
       @Route('GET', '/return-as-response')
       handle() {
         return { message:'Victory!' };
       }
     }
-
-    Manifest.generateRoutes(app);
+  
+    const app = express();
+    RouteMetadata.generateRoutes(app);
     const result = await request(app).get('/return-as-response');
     expect(result.body.message).to.equal('Victory!');
   });
 
-  it.only('should use HTTPResponse class for more precise control over response', async function() {
+  it('should use HTTPResponse class for more precise control over response', async function() {
+    @API('/')
     class CUT {
+      constructor(
+        @inject(tokens.Response) private response:Response
+      ) {}
+      
       @Route('GET', '/http-response-response')
       handle() {
         return {
@@ -41,8 +42,9 @@ describe('publish', function() {
         };
       }
     }
-
-    Manifest.generateRoutes(app);
+  
+    const app = express();
+    RouteMetadata.generateRoutes(app);
     const result = await request(app).get('/http-response-response');
 
     expect(result.statusCode).to.equal(400);
@@ -51,18 +53,20 @@ describe('publish', function() {
   });
 
   it('should be able to use traditional request object for traditional handling', async function() {
+    @API('/')
     class CUT {
       constructor(
         @inject(tokens.Response) private response:Response
       ) {}
-  
+      
       @Route('GET', '/traditional-response')
       handle() {
         this.response.status(400).contentType('text/plain').send('This is simple text');
       }
     }
-
-    Manifest.generateRoutes(app);
+  
+    const app = express();
+    RouteMetadata.generateRoutes(app);
     const result = await request(app).get('/traditional-response');
 
     expect(result.statusCode).to.equal(400);
@@ -70,28 +74,20 @@ describe('publish', function() {
     expect(result.text).to.equal('This is simple text');
   });
 
-  it('should allow ability to handle error and return a response', async function() {
+  it('should automatically publish unhandled errors as 500', async function() {
+    @API('/')
     class CUT {
-      constructor(
-        @inject(tokens.Response) private response:Response
-      ) {}
+      constructor() {}
   
-      @Route('GET', '/traditional-response')
+      @Route('GET', '/unexpected-error')
       handle() {
         throw new Error('Oh no!');
       }
-
-      catch(err: Error): IHTTPResponse<string>{
-        return {
-          statusCode:500,
-          contentType:'text/plain',
-          body:'Internal Server Error'
-        };
-      }
     }
-
-    Manifest.generateRoutes(app);
-    const result = await request(app).get('/traditional-response');
+  
+    const app = express();
+    RouteMetadata.generateRoutes(app);
+    const result = await request(app).get('/unexpected-error');
 
     expect(result.statusCode).to.equal(500);
     expect(result.text).to.equal('Internal Server Error');

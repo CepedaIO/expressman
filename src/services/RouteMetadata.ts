@@ -1,4 +1,5 @@
 import {Application, Request, Response} from "express";
+import * as path from "path";
 import ContainerMiddleware from "../middleware/ContainerMiddleware";
 import {middlewareFromDescriptor, toExpressMiddleware} from "./middlewareFromDescriptor";
 import {SendResponseMiddleware} from "../middleware/SendResponseMiddleware";
@@ -10,13 +11,21 @@ import {
   Wrapperware
 } from "../types";
 import {ErrorMiddleware} from "../middleware/ErrorMiddleware";
-import Dict = NodeJS.Dict;
 
 export interface ManifestOptions {
   before?:Array<Middleware>;
   after?:Array<Middleware>;
   configureContainer?(container:DependencyContainer, request:Request, response:Response);
   onUncaughtException?(container:DependencyContainer, error: any): Promise<any>;
+}
+
+export class APIDescriptor {
+  basePath!: string;
+  routes: Map<string, RouteDescriptor> = new Map();
+  
+  constructor(
+    public target: AnyNewable
+  ) { }
 }
 
 export class RouteDescriptor {
@@ -27,41 +36,45 @@ export class RouteDescriptor {
   public wrap:Wrapperware[] = [];
   
   constructor(
-    public target: AnyNewable,
     public property: string
   ) {
   }
 }
 
-
 class RouteMetadata {
   container:IParentContainer<any>;
-  routes: Map<AnyNewable, Dict<RouteDescriptor>> = new Map();
+  apis: Map<AnyNewable, APIDescriptor> = new Map();
   
   has(target:AnyNewable): boolean {
-    return this.routes.has(target)
+    return this.apis.has(target)
   }
   
-  get(target:AnyNewable): Dict<RouteDescriptor> {
+  get(target:AnyNewable): APIDescriptor {
     if(!this.has(target)) {
-      this.routes.set(target, {});
+      this.apis.set(target, new APIDescriptor(target));
     }
     
-    return this.routes.get(target)!;
+    return this.apis.get(target)!;
   }
   
   getRouteDescriptor(target:AnyNewable, property:string): RouteDescriptor {
-    const routeDict = this.get(target);
-    if(!routeDict[property]) {
-      routeDict[property] = new RouteDescriptor(target, property);
+    const apiDescriptor = this.get(target);
+    
+    if(!apiDescriptor.routes.has(property)) {
+      apiDescriptor.routes.set(property, new RouteDescriptor(property))
     }
     
-    return routeDict[property]!;
+    return apiDescriptor.routes.get(property)!;
+  }
+  
+  createAPI(target:AnyNewable, basePath:string) {
+    const apiDescriptor = this.get(target);
+    apiDescriptor.basePath = basePath;
   }
   
   createRoute(target:AnyNewable, property:string, method:string, path:string) {
     const descriptor = this.getRouteDescriptor(target, property);
-    descriptor.method = method;
+    descriptor.method = method.toLocaleLowerCase();
     descriptor.path = path;
   }
 
@@ -90,13 +103,10 @@ class RouteMetadata {
       });
     }
     
-    this.routes.forEach((descriptorDict) => {
-      Object.entries(descriptorDict).forEach(([property, descriptor]) => {
-        if(!descriptor) {
-          throw new Error(`No descriptor found for ${property}`);
-        }
-        
-        app[descriptor.method](descriptor.path, middlewareFromDescriptor(descriptor));
+    this.apis.forEach((apiDescriptor) => {
+      apiDescriptor.routes.forEach((routeDescriptor) => {
+        const url = path.normalize(`${apiDescriptor.basePath}/${routeDescriptor.path}`);
+        app[routeDescriptor.method](url, middlewareFromDescriptor(apiDescriptor, routeDescriptor));
       });
     });
   

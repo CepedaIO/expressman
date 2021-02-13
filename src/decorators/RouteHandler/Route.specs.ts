@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import {Route} from "./Route";
-import Manifest from "../../services/RouteMetadata";
+import RouteMetadata from "../../services/RouteMetadata";
 
 describe('Route', function() {
   it('should define a get route as metadata', function() {
@@ -11,10 +11,8 @@ describe('Route', function() {
       }
     }
 
-    const entry = Manifest.routes.get(CUT)!;
-    
-    expect(entry.handle!.method).to.equal('GET');
-    expect(entry.handle!.path).to.equal('/');
-    expect(entry.handle!.target).to.equal(CUT);
+    const route = RouteMetadata.getRouteDescriptor(CUT, 'handle');
+    expect(route.method).to.equal('get');
+    expect(route.path).to.equal('/');
   });
 });

@@ -1,7 +1,7 @@
 /*
 import { expect } from "chai";
 import {Before} from "./Before";
-import Manifest from "../../services/RouteMetadata";
+import RouteMetadata from "../../services/RouteMetadata";
 import {Route} from "./Route";
 
 describe('Before', function() {
@@ -20,7 +20,7 @@ describe('Before', function() {
       }
     }
 
-    expect(Manifest.before.get(CUT)).to.deep.equal([ BEFORECUT ]);
+    expect(RouteMetadata.before.get(CUT)).to.deep.equal([ BEFORECUT ]);
   });
 });
 */
