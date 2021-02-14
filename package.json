@@ -20,7 +20,8 @@
     "lodash.get": "^4.4.2",
     "lodash.kebabcase": "^4.1.1",
     "ts-morph": "^7.1.1",
-    "tsyringe": "^4.3.0"
+    "tsyringe": "^4.3.0",
+    "yaml": "^1.10.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",

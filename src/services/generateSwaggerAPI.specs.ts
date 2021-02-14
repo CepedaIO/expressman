@@ -1,18 +1,10 @@
 import { expect } from "chai";
 import {API, Route} from "../decorators";
 import {Swagger} from "../decorators/Swagger/Swagger";
-import {generateSwagger} from "./generateSwagger";
-import * as path from "path";
-import * as TJS from "typescript-json-schema";
+import {generateSwaggerAPI} from "./generateSwaggerAPI";
 
-const files = [ 'src/services/generateSwagger.specs.ts'];
-const resolvedFiles = files.map((file) => path.resolve(file));
-const program = TJS.getProgramFromFiles(
-  resolvedFiles
-);
-
-describe("generateSwagger", function() {
-  it('should generate swagger documentation', function() {
+describe("generateSwaggerAPI", function() {
+  it('should generate swagger documentation', async function() {
     this.timeout(0);
     class CUTInput {
       firstname: string;
@@ -34,7 +26,7 @@ describe("generateSwagger", function() {
       }
     }
     
-    const swagger = generateSwagger(program);
+    const swagger = await generateSwaggerAPI('src');
     
     expect(swagger.paths).to.have.nested.include({'/json-response.get.operationId': 'getJSONResponse' });
     expect(swagger.paths).to.have.nested.include({'/json-response.get.responses.200.content.application/json.schema.$ref': '#/components/schemas/CUTInput' });
