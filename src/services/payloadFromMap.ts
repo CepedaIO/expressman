@@ -1,7 +1,7 @@
 import {Request} from "express";
 import {Pairs} from "../types";
 import { get } from "lodash";
-import {InputDescriptor} from "./InputMetadata";
+import {InputDescriptor} from "./metadata/InputMetadata";
 
 export async function payloadFromMap(descriptor:InputDescriptor, request:Request) {
   let valid = true;

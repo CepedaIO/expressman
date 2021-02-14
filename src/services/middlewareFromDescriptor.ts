@@ -1,5 +1,5 @@
 import {RequestHandler} from "express";
-import {APIDescriptor, RouteDescriptor} from "./RouteMetadata";
+import {APIDescriptor, RouteDescriptor} from "./metadata/RouteMetadata";
 import { flatten } from 'lodash';
 import {Middleware} from "../types";
 import {RouteMiddleware} from "../middleware/RouteMiddleware";
@@ -21,11 +21,10 @@ export function middlewareFromDescriptor(api: APIDescriptor, route: RouteDescrip
   const middleware:Array<RequestHandler> = [];
   
   const beforeMiddleware = route.before.map(handler => toExpressMiddleware(handler));
-  debugger;
+  const afterMiddleware = route.after.map(handler => toExpressMiddleware(handler));
   const handler = RouteMiddleware(api, route, (result, resp) => {
     resp.locals['$response'] = result;
   })
-  const afterMiddleware = route.after.map(handler => toExpressMiddleware(handler));
   
   middleware.push(...flatten(beforeMiddleware), handler, ...flatten(afterMiddleware));
 

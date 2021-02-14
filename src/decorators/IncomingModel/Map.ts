@@ -1,5 +1,5 @@
 import { kebabCase } from 'lodash';
-import InputMetadata from "../../services/InputMetadata";
+import InputMetadata from "../../services/metadata/InputMetadata";
 import {AnyNewable} from "../../types";
 
 export type PremadeValidationRule = (overrides?:ValidationRuleModifiers) => ValidationRule;

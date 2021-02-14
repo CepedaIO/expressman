@@ -1,5 +1,5 @@
 import {injectable} from "tsyringe";
-import RouteMetadata from "../../services/RouteMetadata";
+import RouteMetadata from "../../services/metadata/RouteMetadata";
 import {AnyNewable} from "../../types";
 
 export function API(basePath:string) {

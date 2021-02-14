@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import {Map} from "./Map";
-import InputMetadata from "../../services/InputMetadata";
+import InputMetadata from "../../services/metadata/InputMetadata";
 
 interface iTest {
   firstname:string;

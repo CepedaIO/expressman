@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import {Route} from "./Route";
-import RouteMetadata from "../../services/RouteMetadata";
+import RouteMetadata from "../../services/metadata/RouteMetadata";
 
 describe('Route', function() {
   it('should define a get route as metadata', function() {

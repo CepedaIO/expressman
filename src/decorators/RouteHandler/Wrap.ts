@@ -1,5 +1,5 @@
 import {AnyNewable, Wrapperware} from "../../types";
-import RouteMetadata from "../../services/RouteMetadata";
+import RouteMetadata from "../../services/metadata/RouteMetadata";
 
 export function Wrap(...wrappers:Array<Wrapperware>) {
   return (target:AnyNewable, property:string) => {

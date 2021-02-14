@@ -6,7 +6,7 @@ import {API, Route} from "../decorators";
 import {Response} from "express";
 import {tokens} from "../tokens";
 import {publish} from "./publish";
-import RouteMetadata from "./RouteMetadata";
+import RouteMetadata from "./metadata/RouteMetadata";
 
 describe('publish', function() {
   this.timeout(0);

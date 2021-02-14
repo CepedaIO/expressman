@@ -1,16 +1,16 @@
 import {Application, Request, Response} from "express";
 import * as path from "path";
-import ContainerMiddleware from "../middleware/ContainerMiddleware";
-import {middlewareFromDescriptor, toExpressMiddleware} from "./middlewareFromDescriptor";
-import {SendResponseMiddleware} from "../middleware/SendResponseMiddleware";
+import ContainerMiddleware from "../../middleware/ContainerMiddleware";
+import {middlewareFromDescriptor, toExpressMiddleware} from "../middlewareFromDescriptor";
+import {SendResponseMiddleware} from "../../middleware/SendResponseMiddleware";
 import DependencyContainer from "tsyringe/dist/typings/types/dependency-container";
 import {
   AnyNewable,
   IParentContainer,
   Middleware,
   Wrapperware
-} from "../types";
-import {ErrorMiddleware} from "../middleware/ErrorMiddleware";
+} from "../../types";
+import {ErrorMiddleware} from "../../middleware/ErrorMiddleware";
 
 export interface ManifestOptions {
   before?:Array<Middleware>;

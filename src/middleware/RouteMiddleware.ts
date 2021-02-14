@@ -1,10 +1,10 @@
 import {Wrapperware} from "../types";
 import {NextFunction, Request, RequestHandler, Response} from "express";
-import {APIDescriptor, RouteDescriptor} from "../services/RouteMetadata";
+import {APIDescriptor, RouteDescriptor} from "../services/metadata/RouteMetadata";
 import {payloadFromMap} from "../services/payloadFromMap";
 import {ValidationError} from "../models/errors/ValidationError";
 import DependencyContainer from "tsyringe/dist/typings/types/dependency-container";
-import InputMetadata from "../services/InputMetadata";
+import InputMetadata from "../services/metadata/InputMetadata";
 
 async function getPayload(api:APIDescriptor, req:Request) {
   const inputMetadata = InputMetadata.get(api.target);

@@ -1,8 +1,8 @@
 import {
   AnyNewable
-} from "../types";
+} from "../../types";
 import Dict = NodeJS.Dict;
-import {MapOptions} from "../decorators";
+import {MapOptions} from "../../decorators";
 
 type IInputProperyDescriptor = MapOptions & {
   path: string[];
