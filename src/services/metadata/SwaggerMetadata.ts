@@ -22,6 +22,10 @@ export class SwaggerRouteDescriptor {
 class InputMetadata {
   swaggers: Map<AnyNewable, SwaggerAPIDescriptor> = new Map();
   
+  hasMetadata(): boolean {
+    return this.swaggers.size > 0;
+  }
+  
   get(target:AnyNewable): SwaggerAPIDescriptor {
     if(!this.swaggers.has(target)) {
       this.swaggers.set(target, new SwaggerAPIDescriptor(target));

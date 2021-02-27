@@ -30,7 +30,7 @@ export class APIDescriptor {
 
 export class RouteDescriptor {
   public method!: string;
-  public path!: string;
+  public path?: string;
   public before:Middleware[] = [];
   public after:Middleware[] = [];
   public wrap:Wrapperware[] = [];
@@ -72,7 +72,7 @@ class RouteMetadata {
     apiDescriptor.basePath = basePath;
   }
   
-  createRoute(target:AnyNewable, property:string, method:string, path:string) {
+  createRoute(target:AnyNewable, property:string, method:string, path?:string) {
     const descriptor = this.getRouteDescriptor(target, property);
     descriptor.method = method.toLocaleLowerCase();
     descriptor.path = path;
