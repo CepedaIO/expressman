@@ -8,9 +8,13 @@ const cache:Map<string, TJS.Program> = new Map();
 
 export interface SwaggerOptions {
   path: string;
+  define: {
+    title: string;
+    description: string;
+  };
   outpath?: string;
-  exclude?: string,
-  recreate?: boolean
+  exclude?: string;
+  recreate?: boolean;
 }
 
 export async function programFor(routePattern:string, excludePattern?:string): Promise<TJS.Program> {
@@ -57,8 +61,8 @@ export async function generateSwagger(pattern:string, options:SwaggerOptions) {
   const document = {
     openapi: '3.0.0',
     info: {
-      title: 'Hard coded title',
-      description: 'Test for now'
+      title: options.define.title,
+      description: options.define.description
     },
     ...swaggerAPI
   };

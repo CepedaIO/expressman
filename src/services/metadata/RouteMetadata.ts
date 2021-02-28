@@ -97,10 +97,9 @@ class RouteMetadata {
     app.use(ContainerMiddleware(options));
 
     if(options.before) {
-      const beforeMiddleware = options.before.map((handler) => toExpressMiddleware(handler));
-      beforeMiddleware.forEach((middleware) => {
-        app.use(middleware);
-      });
+      options.before
+        .map((handler) => toExpressMiddleware(handler))
+        .forEach((middleware) => app.use(middleware));
     }
     
     this.apis.forEach((apiDescriptor) => {
@@ -111,10 +110,9 @@ class RouteMetadata {
     });
   
     if(options.after) {
-      const afterMiddleware = options.after.map((handler) => toExpressMiddleware(handler));
-      afterMiddleware.forEach((middleware) => {
-        app.use(middleware);
-      });
+      options.after
+        .map((handler) => toExpressMiddleware(handler))
+        .forEach((middleware) => app.use(middleware));
     }
     
     app.use(SendResponseMiddleware);

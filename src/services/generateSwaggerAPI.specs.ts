@@ -5,7 +5,7 @@ import {generateSwaggerAPI} from "./generateSwaggerAPI";
 import {programFor} from "./generateSwagger";
 
 describe("generateSwaggerAPI", function() {
-  it('should generate swagger documentation', async function() {
+  it('should generate swagger documentation from classes', async function() {
     const program = await programFor('src/**/*.specs.ts');
     this.timeout(0);
     class CUTInput {
