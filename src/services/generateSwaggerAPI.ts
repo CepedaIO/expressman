@@ -3,20 +3,24 @@ import * as TJS from "typescript-json-schema";
 import * as path from "path";
 import SwaggerMetadata, {SwaggerRouteDescriptor} from "./metadata/SwaggerMetadata";
 import RouteMetadata from "./metadata/RouteMetadata";
+import gatherSymbols from "../utils/gatherSymbols";
 
 export async function generateSwaggerAPI(program:TJS.Program) {
   const paths = {};
   const schemas = {};
   
   const generator = TJS.buildGenerator(program)!;
+  
   SwaggerMetadata.swaggers.forEach((swaggerApi) => {
     const api = RouteMetadata.apis.get(swaggerApi.target)!;
+    const fileSymbols = gatherSymbols(api.filePath);
     
     swaggerApi.routes.forEach((swaggerRoute) => {
       const route = api.routes.get(swaggerRoute.property)!;
-      const inputSchema = swaggerRoute.input ? generator.getSchemaForSymbol(swaggerRoute.input.name) : null;
-      const outputSchema = swaggerRoute.output ? generator.getSchemaForSymbol(swaggerRoute.output.name) : null;
-      const url = path.normalize(`${api.basePath}/${route.path}`);
+      const symbols = fileSymbols.methods.get(route.property)!;
+      const inputSchema = symbols.arg ? generator.getSchemaForSymbol(symbols.arg) : null;
+      const outputSchema = symbols.return ? generator.getSchemaForSymbol(symbols.return) : null;
+      const url = path.normalize(`${api.path}/${route.path}`);
 
       if(inputSchema) {
         schemas[swaggerRoute.input.name] = inputSchema;

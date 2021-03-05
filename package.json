@@ -15,6 +15,7 @@
   "author": "Alfred Cepeda",
   "license": "ISC",
   "dependencies": {
+    "callsites": "^3.1.0",
     "glob": "^7.1.6",
     "lodash.flatten": "^4.4.0",
     "lodash.get": "^4.4.2",

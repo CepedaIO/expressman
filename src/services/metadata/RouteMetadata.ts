@@ -20,7 +20,8 @@ export interface ManifestOptions {
 }
 
 export class APIDescriptor {
-  basePath!: string;
+  path: string = '/';
+  filePath!: string;
   routes: Map<string, RouteDescriptor> = new Map();
   
   constructor(
@@ -30,7 +31,7 @@ export class APIDescriptor {
 
 export class RouteDescriptor {
   public method!: string;
-  public path?: string;
+  public path: string = '';
   public before:Middleware[] = [];
   public after:Middleware[] = [];
   public wrap:Wrapperware[] = [];
@@ -67,15 +68,17 @@ class RouteMetadata {
     return apiDescriptor.routes.get(property)!;
   }
   
-  createAPI(target:AnyNewable, basePath:string) {
+  createAPI(target:AnyNewable, basePath:string, filePath:string) {
     const apiDescriptor = this.get(target);
-    apiDescriptor.basePath = basePath;
+    apiDescriptor.path = basePath;
+    apiDescriptor.filePath = filePath;
   }
   
   createRoute(target:AnyNewable, property:string, method:string, path?:string) {
     const descriptor = this.getRouteDescriptor(target, property);
     descriptor.method = method.toLocaleLowerCase();
-    descriptor.path = path;
+    
+    if(path) { descriptor.path = path; }
   }
 
   setBefore(target:AnyNewable, property:string, middleware:Array<Middleware>) {
@@ -104,7 +107,7 @@ class RouteMetadata {
     
     this.apis.forEach((apiDescriptor) => {
       apiDescriptor.routes.forEach((routeDescriptor) => {
-        const url = path.normalize(`${apiDescriptor.basePath}/${routeDescriptor.path}`);
+        const url = path.normalize(`${apiDescriptor.path}/${routeDescriptor.path}`);
         app[routeDescriptor.method](url, middlewareFromDescriptor(apiDescriptor, routeDescriptor));
       });
     });

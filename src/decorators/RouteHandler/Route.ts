@@ -1,11 +1,20 @@
 import {injectable} from "tsyringe";
 import RouteMetadata from "../../services/metadata/RouteMetadata";
 import {AnyNewable} from "../../types";
+import callsites from "callsites";
 
 export function API(basePath:string) {
+  const filePath = callsites()[1].getFileName();
+  
+  if(!filePath) {
+    throw new Error('Unable to determine callsite');
+  }
+  
   return (target:AnyNewable) => {
     injectable()(target);
-    RouteMetadata.createAPI(target, basePath);
+    
+    
+    RouteMetadata.createAPI(target, basePath, filePath);
   }
 }
 
