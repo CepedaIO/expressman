@@ -36,7 +36,7 @@ export async function publish<U>(app:Application, options:PublishOptions) {
       if(SwaggerMetadata.hasMetadata() && options.swagger) {
         console.log('Swagger data encountered, deploying SwaggerUI');
         const swaggerDocument = await generateSwagger(options.pattern, options.swagger);
-        app.use(options.swagger.path, swaggerUI.serve);
+        app.use(swaggerUI.serve);
         app.get(options.swagger.path, swaggerUI.setup(swaggerDocument));
       }
       
