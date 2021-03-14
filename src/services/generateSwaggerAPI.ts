@@ -9,8 +9,8 @@ export async function generateSwaggerAPI() {
   RouteMetadata.apis.forEach((api) => {
     api.routes.forEach((swaggerRoute) => {
       const route = api.routes.get(swaggerRoute.property)!;
-      const url = path.normalize(`${api.path}/${route.schema.path}`);
-  
+      const url = path.normalize(`${api.path}/${route.schema.path}`).replace(/\/$/, '');
+      
       if(route.schema.input) {
         schemas[route.schema.input.name] = route.schema.input.schema;
       }
@@ -25,6 +25,7 @@ export async function generateSwaggerAPI() {
   
       const routeDef = {
         operationId: route.property,
+        tags: [api.target.name]
       };
   
       addRequestBody(routeDef, route);
