@@ -2,10 +2,11 @@ import { expect } from "chai";
 import {API, Route} from "../decorators";
 import {generateSwaggerAPI} from "./generateSwaggerAPI";
 import {programFor} from "./generateSwagger";
+import RouteMetadata from "./metadata/RouteMetadata";
+import express = require('express');
 
-describe.skip("generateSwaggerAPI", function() {
+describe("generateSwaggerAPI", function() {
   it('should generate swagger documentation from classes', async function() {
-    const program = await programFor('src/**/*.specs.ts');
     this.timeout(0);
     class CUTInput {
       firstname: string;
@@ -25,7 +26,10 @@ describe.skip("generateSwaggerAPI", function() {
         return { member: true };
       }
     }
-    
+  
+    const app = express();
+    const program = await programFor('**/*.specs.ts')
+    await RouteMetadata.generateRoutes(app, program, {pattern: "**/*.specs.ts"});
     const swagger = await generateSwaggerAPI();
     
     expect(swagger.paths).to.have.nested.include({'/json-response.get.operationId': 'getJSONResponse' });

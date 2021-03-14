@@ -4,6 +4,7 @@ import RouteMetadata from "./metadata/RouteMetadata";
 import DependencyContainer from "tsyringe/dist/typings/types/dependency-container";
 import {Middleware} from "../types";
 import {generateSwagger, programFor, SwaggerOptions} from "./generateSwagger";
+const swaggerUI = require('swagger-ui-express');
 
 export interface PublishOptions {
   pattern: string;
@@ -29,6 +30,8 @@ export async function publish<U>(app:Application, options:PublishOptions) {
       
       if(options.swagger) {
         result.swagger = await generateSwagger(options.pattern, options.swagger);
+        app.use(options.swagger.path, swaggerUI.serve);
+        app.get(options.swagger.path, swaggerUI.setup(result.swagger));
       }
       
       resolve(result);
