@@ -182,12 +182,12 @@ class RouteMetadata {
     const dto = {};
     
     this.apis.forEach((api) => {
-      if(!dto[api.path]) { dto[api.path] = {}; }
-      const apiDTO = dto[api.path];
-      
       api.routes.forEach((route) => {
-        if(!apiDTO[route.schema.path]) { apiDTO[route.schema.path] = {} }
-        apiDTO[route.schema.path][route.schema.method] = route.schema;
+        const url = path.normalize(`${api.path}/${route.schema.path}`).replace(/\/$/, '');
+        dto[url] = {
+          ...dto[url],
+          [route.schema.method]: route.schema
+        }
       });
     });
     
