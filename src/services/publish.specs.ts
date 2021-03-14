@@ -7,34 +7,36 @@ import {Response} from "express";
 import {tokens} from "../tokens";
 import {publish} from "./publish";
 import RouteMetadata from "./metadata/RouteMetadata";
+import {programFor} from "./generateSwagger";
 
 describe('publish', function() {
   this.timeout(0);
 
   it('should use the result of the handler as the content of the response', async function() {
     @API('/')
-    class CUT {
+    class ResultAsResponse {
       @Route('GET', '/return-as-response')
-      handle() {
+      returnAsResponse() {
         return { message:'Victory!' };
       }
     }
   
     const app = express();
-    RouteMetadata.generateRoutes(app);
+    const program = await programFor('**/*.specs.ts')
+    await RouteMetadata.generateRoutes(app, program, {pattern: "**/*.specs.ts"});
     const result = await request(app).get('/return-as-response');
     expect(result.body.message).to.equal('Victory!');
   });
 
   it('should use HTTPResponse class for more precise control over response', async function() {
     @API('/')
-    class CUT {
+    class HTTPResponse {
       constructor(
         @inject(tokens.Response) private response:Response
       ) {}
       
       @Route('GET', '/http-response-response')
-      handle() {
+      httpResponse() {
         return {
           statusCode: 400,
           contentType:'text/plain',
@@ -44,7 +46,8 @@ describe('publish', function() {
     }
   
     const app = express();
-    RouteMetadata.generateRoutes(app);
+    const program = await programFor('**/*.specs.ts')
+    await RouteMetadata.generateRoutes(app, program, {pattern: "**/*.specs.ts"});
     const result = await request(app).get('/http-response-response');
 
     expect(result.statusCode).to.equal(400);
@@ -54,19 +57,20 @@ describe('publish', function() {
 
   it('should be able to use traditional request object for traditional handling', async function() {
     @API('/')
-    class CUT {
+    class TraditionalResponse {
       constructor(
         @inject(tokens.Response) private response:Response
       ) {}
       
       @Route('GET', '/traditional-response')
-      handle() {
+      traditionalResponse() {
         this.response.status(400).contentType('text/plain').send('This is simple text');
       }
     }
   
     const app = express();
-    RouteMetadata.generateRoutes(app);
+    const program = await programFor('**/*.specs.ts')
+    await RouteMetadata.generateRoutes(app, program, {pattern: "**/*.specs.ts"});
     const result = await request(app).get('/traditional-response');
 
     expect(result.statusCode).to.equal(400);
@@ -76,17 +80,18 @@ describe('publish', function() {
 
   it('should automatically publish unhandled errors as 500', async function() {
     @API('/')
-    class CUT {
+    class UnexpectedError {
       constructor() {}
   
       @Route('GET', '/unexpected-error')
-      handle() {
+      unexpectedError() {
         throw new Error('Oh no!');
       }
     }
   
     const app = express();
-    RouteMetadata.generateRoutes(app);
+    const program = await programFor('**/*.specs.ts')
+    await RouteMetadata.generateRoutes(app, program, {pattern: "**/*.specs.ts"});
     const result = await request(app).get('/unexpected-error');
 
     expect(result.statusCode).to.equal(500);

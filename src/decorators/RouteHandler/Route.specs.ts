@@ -4,16 +4,17 @@ import RouteMetadata from "../../services/metadata/RouteMetadata";
 
 describe('Route', function() {
   it('should define a get route as metadata', function() {
-    class CUT {
+    @API('/')
+    class GETRoute {
       @Route('GET', '/')
       handle() {
 
       }
     }
 
-    const route = RouteMetadata.getRouteDescriptor(CUT, 'handle');
-    expect(route.method).to.equal('get');
-    expect(route.path).to.equal('/');
+    const route = RouteMetadata.getRouteDescriptor(GETRoute, 'handle');
+    expect(route.schema.method).to.equal('get');
+    expect(route.schema.path).to.equal('/');
   });
   
   it('should collect API metadata', function() {

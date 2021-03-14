@@ -5,7 +5,7 @@ interface Symbols {
   return?: string;
 }
 
-interface FileSymbols {
+export interface FileSymbols {
   filePath: string;
   methods: Map<string, Symbols>
 }

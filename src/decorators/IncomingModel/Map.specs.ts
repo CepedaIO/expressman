@@ -9,21 +9,11 @@ interface iTest {
 
 describe('Map', function() {
   it('should record map metadata', function() {
-    class CUT {
+    class MapProperty {
       @Map(['body', 'first-name'])
       firstname: iTest;
     }
     
-    expect(InputMetadata.get(CUT)!.propertyMap['firstname']!.path).to.deep.equal(['body', 'first-name']);
-  });
-
-  it('should record map metadata', function() {
-    class CUT {
-      @Map(['body', 'first-name'])
-      firstname: string;
-    }
-  
-    InputMetadata.get(CUT)
-    expect(InputMetadata.get(CUT)!.propertyMap['firstname']!.path).to.deep.equal(['body', 'first-name']);
+    expect(InputMetadata.get(MapProperty)!.propertyMap['firstname']!.path).to.deep.equal(['body', 'first-name']);
   });
 });

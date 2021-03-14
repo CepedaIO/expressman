@@ -21,7 +21,7 @@ describe('ContainerMiddleware', function() {
 
 
     // @ts-ignore
-    ContainerMiddleware<DependencyContainer>()(req, resp, () => {});
+    ContainerMiddleware<DependencyContainer>({})(req, resp, () => {});
     // @ts-ignore
     const child = resp.locals.container;
     const cutInstance = child.resolve<CUT>(CUT);

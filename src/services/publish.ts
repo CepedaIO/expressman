@@ -3,11 +3,9 @@ import glob = require("glob");
 import RouteMetadata from "./metadata/RouteMetadata";
 import DependencyContainer from "tsyringe/dist/typings/types/dependency-container";
 import {Middleware} from "../types";
-import {generateSwagger, SwaggerOptions} from "./generateSwagger";
-import SwaggerMetadata from "./metadata/SwaggerMetadata";
-const swaggerUI = require('swagger-ui-express');
+import {generateSwagger, programFor, SwaggerOptions} from "./generateSwagger";
 
-interface PublishOptions {
+export interface PublishOptions {
   pattern: string;
   swagger?: SwaggerOptions;
   before?: Array<Middleware>;
@@ -23,26 +21,17 @@ export async function publish<U>(app:Application, options:PublishOptions) {
       if(files.length === 0) return reject(new Error('No routes found'));
       
       files.forEach(file => require(`${process.cwd()}/${file}`));
-      RouteMetadata.generateRoutes(app, options);
+      const program = await programFor(options.pattern)
+      await RouteMetadata.generateRoutes(app, program, options);
+      const result = {
+        app, files, swagger:undefined
+      };
       
-      if(SwaggerMetadata.hasMetadata() && !options.swagger) {
-        console.warn('Swagger metadata encountered but no swagger config defined');
+      if(options.swagger) {
+        result.swagger = await generateSwagger(options.pattern, options.swagger);
       }
       
-      if(options.swagger && !SwaggerMetadata.hasMetadata()) {
-        console.warn('Swagger config encountered but no swagger metadata defined');
-      }
-      
-      if(SwaggerMetadata.hasMetadata() && options.swagger) {
-        console.log('Swagger data encountered, deploying SwaggerUI');
-        const swaggerDocument = await generateSwagger(options.pattern, options.swagger);
-        app.use(swaggerUI.serve);
-        app.get(options.swagger.path, swaggerUI.setup(swaggerDocument));
-      }
-      
-      resolve({
-        app, files
-      });
+      resolve(result);
     });
   });
 }

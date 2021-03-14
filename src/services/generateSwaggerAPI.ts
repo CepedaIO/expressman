@@ -1,49 +1,38 @@
 import "reflect-metadata"
-import * as TJS from "typescript-json-schema";
 import * as path from "path";
-import SwaggerMetadata, {SwaggerRouteDescriptor} from "./metadata/SwaggerMetadata";
-import RouteMetadata from "./metadata/RouteMetadata";
-import gatherSymbols from "../utils/gatherSymbols";
+import RouteMetadata, {RouteDescriptor} from "./metadata/RouteMetadata";
 
-export async function generateSwaggerAPI(program:TJS.Program) {
+export async function generateSwaggerAPI() {
   const paths = {};
   const schemas = {};
   
-  const generator = TJS.buildGenerator(program)!;
-  
-  SwaggerMetadata.swaggers.forEach((swaggerApi) => {
-    const api = RouteMetadata.apis.get(swaggerApi.target)!;
-    const fileSymbols = gatherSymbols(api.filePath);
-    
-    swaggerApi.routes.forEach((swaggerRoute) => {
+  RouteMetadata.apis.forEach((api) => {
+    api.routes.forEach((swaggerRoute) => {
       const route = api.routes.get(swaggerRoute.property)!;
-      const symbols = fileSymbols.methods.get(route.property)!;
-      const inputSchema = symbols.arg ? generator.getSchemaForSymbol(symbols.arg) : null;
-      const outputSchema = symbols.return ? generator.getSchemaForSymbol(symbols.return) : null;
-      const url = path.normalize(`${api.path}/${route.path}`);
-
-      if(inputSchema) {
-        schemas[swaggerRoute.input.name] = inputSchema;
+      const url = path.normalize(`${api.path}/${route.schema.path}`);
+  
+      if(route.schema.input) {
+        schemas[route.schema.input.name] = route.schema.input.schema;
       }
-      
-      if(outputSchema) {
-        schemas[swaggerRoute.output.name] = outputSchema;
+  
+      if(route.schema.output) {
+        schemas[route.schema.output.name] = route.schema.output.schema;
       }
-      
+  
       if(!paths[url]) {
         paths[url] = {};
       }
-      
+  
       const routeDef = {
         operationId: route.property,
       };
-      
-      addRequestBody(routeDef, swaggerRoute);
-      addResponses(routeDef, swaggerRoute);
-      
-      paths[url][route.method] = routeDef;
+  
+      addRequestBody(routeDef, route);
+      addResponses(routeDef, route);
+  
+      paths[url][route.schema.method] = routeDef;
     });
-  });
+  })
   
   return {
     paths,
@@ -51,13 +40,13 @@ export async function generateSwaggerAPI(program:TJS.Program) {
   };
 }
 
-function addRequestBody(route, swaggerRoute:SwaggerRouteDescriptor) {
-  if(swaggerRoute.input) {
+function addRequestBody(route, descriptor:RouteDescriptor) {
+  if(descriptor.schema.input) {
     route.requestBody = {
       content: {
         'application/json': {
           schema: {
-            $ref: `#/components/schemas/${swaggerRoute.input.name}`
+            $ref: `#/components/schemas/${descriptor.schema.input.name}`
           }
         }
       }
@@ -65,14 +54,14 @@ function addRequestBody(route, swaggerRoute:SwaggerRouteDescriptor) {
   }
 }
 
-function addResponses(route, swaggerRoute:SwaggerRouteDescriptor) {
-  if(swaggerRoute.output) {
+function addResponses(route, descriptor:RouteDescriptor) {
+  if(descriptor.schema.output) {
     route.responses = {
       200: {
         content: {
           'application/json': {
             schema: {
-              $ref: `#/components/schemas/${swaggerRoute.output.name}`
+              $ref: `#/components/schemas/${descriptor.schema.output.name}`
             }
           }
         }

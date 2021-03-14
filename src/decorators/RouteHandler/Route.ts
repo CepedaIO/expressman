@@ -20,7 +20,13 @@ export function API(basePath:string) {
 
 export function Route(method:string, path?:string) {
   return (target:any, property:string) => {
-    RouteMetadata.createRoute(target.constructor, property, method, path);
+    const paramTypes = Reflect.getMetadata("design:paramtypes", target, property);
+    const returnType = Reflect.getMetadata("design:returntype", target, property);
+  
+    const input = paramTypes[0] && paramTypes[0].name !== "Object" ? paramTypes[0] : undefined;
+    const output = returnType && returnType.name !== "Object" ? returnType : undefined;
+    
+    RouteMetadata.createRoute(target.constructor, property, { method, path: path || '/', input, output });
   }
 }
 

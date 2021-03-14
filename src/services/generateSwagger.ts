@@ -56,8 +56,7 @@ export async function generateSwagger(pattern:string, options:SwaggerOptions) {
     return swaggerJSON;
   }
   
-  const program = await programFor(pattern, options.exclude);
-  const swaggerAPI = await generateSwaggerAPI(program);
+  const swaggerAPI = await generateSwaggerAPI();
   const document = {
     openapi: '3.0.0',
     info: {
