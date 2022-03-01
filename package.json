@@ -1,6 +1,6 @@
 {
-  "name": "expressman",
-  "version": "1.2.0",
+  "name": "@vlegm/expressman",
+  "version": "1.0.0",
   "description": "Yet another wrapper around Express",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
