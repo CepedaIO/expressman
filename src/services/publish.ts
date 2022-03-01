@@ -15,7 +15,13 @@ export interface PublishOptions {
   onUncaughtException?(container:DependencyContainer, error:any);
 }
 
-export async function publish<U>(app:Application, options:PublishOptions) {
+export interface PublishResult {
+  app: Application,
+  files: string[],
+  swagger?: Object
+}
+
+export async function publish<U>(app:Application, options:PublishOptions): Promise<PublishResult> {
   return new Promise( (resolve, reject) => {
     glob(options.pattern, async (err, files) => {
       if(err) return reject(err);

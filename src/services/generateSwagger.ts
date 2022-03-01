@@ -23,7 +23,7 @@ export async function programFor(routePattern:string, excludePattern?:string): P
     let excludedFiles:string[] = [];
     
     if(cache.has(pattern)) {
-      resolve(cache.get(pattern));
+      resolve(cache.get(pattern)!);
     }
     
     if(excludePattern) {
