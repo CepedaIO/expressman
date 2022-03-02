@@ -28,8 +28,8 @@ describe("generateSwaggerAPI", function() {
     }
   
     const app = express();
-    const program = await programFor('**/*.specs.ts')
-    await RouteMetadata.generateRoutes(app, program, {pattern: "**/*.specs.ts"});
+    await RouteMetadata.generateRoutes(app, {pattern: "**/*.specs.ts"});
+    await RouteMetadata.generateSchemas('**/*.specs.ts');
     const swagger = await generateSwaggerAPI();
     
     expect(swagger.paths).to.have.nested.include({'/json-response.get.operationId': 'getJSONResponse' });

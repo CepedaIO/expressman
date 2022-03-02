@@ -28,8 +28,10 @@ export async function publish<U>(app:Application, options:PublishOptions): Promi
       if(files.length === 0) return reject(new Error('No routes found'));
       
       files.forEach(file => require(`${process.cwd()}/${file}`));
-      const program = await programFor(options.pattern)
-      await RouteMetadata.generateRoutes(app, program, options);
+
+      await RouteMetadata.generateRoutes(app, options);
+      await RouteMetadata.generateSchemas(options.pattern);
+
       const result = {
         app, files, swagger:undefined
       };

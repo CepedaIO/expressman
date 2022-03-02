@@ -13,6 +13,7 @@ import {
 import {ErrorMiddleware} from "../../middleware/ErrorMiddleware";
 import * as TJS from "typescript-json-schema";
 import gatherSymbols, {FileSymbols} from "../../utils/gatherSymbols";
+import {programFor} from "../generateSwagger";
 
 interface MetadataOptions {
   path?: string;
@@ -122,9 +123,7 @@ class RouteMetadata {
     descriptor.wrap = wrapperware;
   }
 
-  async generateRoutes(app:Application, program:TJS.Program, options:ManifestOptions) {
-    await this.generateSchemas(program);
-    
+  async generateRoutes(app:Application, options:ManifestOptions) {
     app.use(ContainerMiddleware(options));
 
     if(options.before) {
@@ -154,8 +153,14 @@ class RouteMetadata {
     app.use(ErrorMiddleware(options.onUncaughtException));
   }
   
-  async generateSchemas(program:TJS.Program) {
+  async generateSchemas(pattern:string) {
+    const program = await programFor(pattern)
     const generator = TJS.buildGenerator(program)!;
+
+    if(!generator) {
+      console.log('Unable to generate schema, errors likely encountered');
+      return;
+    }
     
     this.apis.forEach((api) => {
       api.routes.forEach((route) => {

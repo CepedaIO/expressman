@@ -22,8 +22,8 @@ describe('publish', function() {
     }
   
     const app = express();
-    const program = await programFor('**/*.specs.ts')
-    await RouteMetadata.generateRoutes(app, program, {pattern: "**/*.specs.ts"});
+    await RouteMetadata.generateRoutes(app, {pattern: "**/*.specs.ts"});
+    await RouteMetadata.generateSchemas('**/*.specs.ts');
     const result = await request(app).get('/return-as-response');
     expect(result.body.message).to.equal('Victory!');
   });
@@ -46,8 +46,8 @@ describe('publish', function() {
     }
   
     const app = express();
-    const program = await programFor('**/*.specs.ts')
-    await RouteMetadata.generateRoutes(app, program, {pattern: "**/*.specs.ts"});
+    await RouteMetadata.generateRoutes(app, {pattern: "**/*.specs.ts"});
+    await RouteMetadata.generateSchemas('**/*.specs.ts');
     const result = await request(app).get('/http-response-response');
 
     expect(result.statusCode).to.equal(400);
@@ -69,8 +69,8 @@ describe('publish', function() {
     }
   
     const app = express();
-    const program = await programFor('**/*.specs.ts')
-    await RouteMetadata.generateRoutes(app, program, {pattern: "**/*.specs.ts"});
+    await RouteMetadata.generateRoutes(app, {pattern: "**/*.specs.ts"});
+    await RouteMetadata.generateSchemas('**/*.specs.ts');
     const result = await request(app).get('/traditional-response');
 
     expect(result.statusCode).to.equal(400);
@@ -90,8 +90,8 @@ describe('publish', function() {
     }
   
     const app = express();
-    const program = await programFor('**/*.specs.ts')
-    await RouteMetadata.generateRoutes(app, program, {pattern: "**/*.specs.ts"});
+    await RouteMetadata.generateRoutes(app, {pattern: "**/*.specs.ts"});
+    await RouteMetadata.generateSchemas('**/*.specs.ts');
     const result = await request(app).get('/unexpected-error');
 
     expect(result.statusCode).to.equal(500);

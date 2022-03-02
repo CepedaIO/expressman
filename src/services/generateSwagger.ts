@@ -41,7 +41,8 @@ export async function programFor(routePattern:string, excludePattern?:string): P
       const remaining = files.filter(file => !excludedSet.has(file) && !file.includes('.d.ts'));
       remaining.forEach(file => require(file));
       const program = TJS.getProgramFromFiles(remaining, {
-        esModuleInterop: true
+        esModuleInterop: true,
+        skipLibCheck: true
       });
       cache.set(pattern, program);
       resolve(program);
