@@ -124,8 +124,6 @@ class RouteMetadata {
   }
 
   async generateRoutes(app:Application, options:ManifestOptions) {
-    app.use(ContainerMiddleware(options));
-
     if(options.before) {
       options.before
         .map((handler) => toExpressMiddleware(handler))
@@ -135,7 +133,13 @@ class RouteMetadata {
     this.apis.forEach((apiDescriptor) => {
       apiDescriptor.routes.forEach((routeDescriptor) => {
         const url = path.normalize(`${apiDescriptor.path}/${routeDescriptor.schema.path}`);
-        app[routeDescriptor.schema.method](url, middlewareFromDescriptor(apiDescriptor, routeDescriptor));
+        const routeHandlerMiddleware = middlewareFromDescriptor(apiDescriptor, routeDescriptor);
+        app[routeDescriptor.schema.method](url, [
+          ContainerMiddleware(options),
+          ...routeHandlerMiddleware,
+          SendResponseMiddleware,
+          ErrorMiddleware(options.onUncaughtException)
+        ]);
       });
     });
   
@@ -148,9 +152,6 @@ class RouteMetadata {
     app.get(options.metadata?.path || '/expressman', (req: Request, resp: Response, next) => {
       resp.send(this.toDTO());
     });
-    
-    app.use(SendResponseMiddleware);
-    app.use(ErrorMiddleware(options.onUncaughtException));
   }
   
   async generateSchemas(pattern:string) {

@@ -26,7 +26,7 @@ async function getPayload(api:APIDescriptor, req:Request) {
   };
 }
 
-export function RouteMiddleware(api:APIDescriptor, route: RouteDescriptor, onResult?: (result:any, resp:Response) => void): RequestHandler {
+export function RouteMiddleware(api:APIDescriptor, route: RouteDescriptor): RequestHandler {
   let handler;
 
   return async (req:Request, resp:Response, next:NextFunction) => {
@@ -45,7 +45,7 @@ export function RouteMiddleware(api:APIDescriptor, route: RouteDescriptor, onRes
         handler = container.resolve(api.target);
         const result = await handler[route.property](payload, req, resp);
         resp.locals[api.target.name] = result;
-        onResult && onResult(result, resp);
+        resp.locals['$response'] = result;
         return next();
       }
 

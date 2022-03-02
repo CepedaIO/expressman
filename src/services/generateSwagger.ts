@@ -4,6 +4,9 @@ import {existsSync, readFileSync, writeFileSync} from "fs";
 import * as TJS from "typescript-json-schema";
 import glob from "glob";
 
+/**
+ * This is for tests and should be removed from the workflow
+ */
 const cache:Map<string, TJS.Program> = new Map();
 
 export interface SwaggerOptions {

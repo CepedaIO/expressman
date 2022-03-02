@@ -14,19 +14,15 @@ export function toExpressMiddleware(middleware: Middleware): Array<RequestHandle
   }
 
   throw new Error('RouteHandler as Middleware is not supported yet');
-  //return middlewareFromHandler(descriptor, middleware);
 }
 
 export function middlewareFromDescriptor(api: APIDescriptor, route: RouteDescriptor): Array<RequestHandler> {
-  const middleware:Array<RequestHandler> = [];
-  
   const beforeMiddleware = route.before.map(handler => toExpressMiddleware(handler));
   const afterMiddleware = route.after.map(handler => toExpressMiddleware(handler));
-  const handler = RouteMiddleware(api, route, (result, resp) => {
-    resp.locals['$response'] = result;
-  })
-  
-  middleware.push(...flatten(beforeMiddleware), handler, ...flatten(afterMiddleware));
 
-  return middleware;
+  return [
+    ...flatten(beforeMiddleware),
+    RouteMiddleware(api, route),
+    ...flatten(afterMiddleware)
+  ];
 }
