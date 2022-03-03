@@ -14,6 +14,6 @@ describe('Map', function() {
       firstname: iTest;
     }
     
-    expect(InputMetadata.get(MapProperty)!.propertyMap['firstname']!.path).to.deep.equal(['body', 'first-name']);
+    expect(InputMetadata.get('MapProperty')!.propertyMap['firstname']!.path).to.deep.equal(['body', 'first-name']);
   });
 });

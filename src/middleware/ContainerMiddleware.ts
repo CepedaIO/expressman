@@ -1,9 +1,9 @@
 import {Request, Response, NextFunction} from "express";
 import {tokens} from "../tokens";
 import {container} from "tsyringe";
-import {ManifestOptions} from "../services/metadata/RouteMetadata";
+import {PublishOptions} from "../services/publish";
 
-export default function ContainerMiddleware(options:ManifestOptions) {
+export default function ContainerMiddleware(options:PublishOptions) {
   return (req: Request, resp: Response, next: NextFunction) => {
     const child = container.createChildContainer();
 

@@ -8,9 +8,13 @@ const swaggerUI = require('swagger-ui-express');
 
 export interface PublishOptions {
   pattern: string;
+  bodyparser?: boolean; /** true by default, expressman then provides body parser rules **/
   swagger?: SwaggerOptions;
   before?: Array<Middleware>;
   after?: Array<Middleware>;
+  metadata?: {
+    path?: string;
+  };
   configureContainer?(container:DependencyContainer, request:Request, response:Response);
   onUncaughtException?(container:DependencyContainer, error:any);
 }

@@ -3,7 +3,6 @@ import * as path from "path";
 import ContainerMiddleware from "../../middleware/ContainerMiddleware";
 import {middlewareFromDescriptor, toExpressMiddleware} from "../middlewareFromDescriptor";
 import {SendResponseMiddleware} from "../../middleware/SendResponseMiddleware";
-import DependencyContainer from "tsyringe/dist/typings/types/dependency-container";
 import {
   AnyNewable,
   IParentContainer,
@@ -14,26 +13,16 @@ import {ErrorMiddleware} from "../../middleware/ErrorMiddleware";
 import * as TJS from "typescript-json-schema";
 import gatherSymbols, {FileSymbols} from "../../utils/gatherSymbols";
 import {programFor} from "../generateSwagger";
-
-interface MetadataOptions {
-  path?: string;
-}
-
-export interface ManifestOptions {
-  pattern: string;
-  metadata?: MetadataOptions;
-  before?:Array<Middleware>;
-  after?:Array<Middleware>;
-  configureContainer?(container:DependencyContainer, request:Request, response:Response);
-  onUncaughtException?(container:DependencyContainer, error: any): Promise<any>;
-}
+import bodyParser from "body-parser";
+import {PublishOptions} from "../publish";
 
 export class APIDescriptor {
   path: string = '/';
   filePath!: string;
   symbols: FileSymbols;
+  methods: Map<string, RouteDescriptor> = new Map();
   routes: Map<string, RouteDescriptor> = new Map();
-  
+
   constructor(
     public target: AnyNewable
   ) { }
@@ -67,6 +56,10 @@ export class RouteDescriptor {
   }
 }
 
+export function urlFrom(api:APIDescriptor, route:RouteDescriptor) {
+  return path.normalize(`${api.path}/${route.schema.path}`).replace(/\/$/, '');
+}
+
 class RouteMetadata {
   container:IParentContainer<any>;
   apis: Map<AnyNewable, APIDescriptor> = new Map();
@@ -84,13 +77,15 @@ class RouteMetadata {
   }
   
   getRouteDescriptor(target:AnyNewable, property:string): RouteDescriptor {
-    const apiDescriptor = this.get(target);
+    const api = this.get(target);
     
-    if(!apiDescriptor.routes.has(property)) {
-      apiDescriptor.routes.set(property, new RouteDescriptor(property))
+    if(!api.methods.has(property)) {
+      const route = new RouteDescriptor(property);
+      api.methods.set(property, route);
+      api.routes.set(urlFrom(api, route), route);
     }
     
-    return apiDescriptor.routes.get(property)!;
+    return api.methods.get(property)!;
   }
   
   createAPI(target:AnyNewable, basePath:string, filePath:string) {
@@ -123,7 +118,12 @@ class RouteMetadata {
     descriptor.wrap = wrapperware;
   }
 
-  async generateRoutes(app:Application, options:ManifestOptions) {
+  async generateRoutes(app:Application, options:PublishOptions) {
+    if(options.bodyparser !== false) {
+      app.use(bodyParser.urlencoded({ extended: false }));
+      app.use(bodyParser.json());
+    }
+
     if(options.before) {
       options.before
         .map((handler) => toExpressMiddleware(handler))
@@ -131,7 +131,7 @@ class RouteMetadata {
     }
     
     this.apis.forEach((apiDescriptor) => {
-      apiDescriptor.routes.forEach((routeDescriptor) => {
+      apiDescriptor.methods.forEach((routeDescriptor) => {
         const url = path.normalize(`${apiDescriptor.path}/${routeDescriptor.schema.path}`);
         const routeHandlerMiddleware = middlewareFromDescriptor(apiDescriptor, routeDescriptor);
         app[routeDescriptor.schema.method](url, [
@@ -164,7 +164,7 @@ class RouteMetadata {
     }
     
     this.apis.forEach((api) => {
-      api.routes.forEach((route) => {
+      api.methods.forEach((route) => {
         const symbols = api.symbols.methods.get(route.property) || {};
         
         if (symbols.arg) {
@@ -188,7 +188,7 @@ class RouteMetadata {
     const dto = {};
     
     this.apis.forEach((api) => {
-      api.routes.forEach((route) => {
+      api.methods.forEach((route) => {
         const url = path.normalize(`${api.path}/${route.schema.path}`).replace(/\/$/, '');
         dto[url] = {
           ...dto[url],

@@ -12,8 +12,7 @@ export function API(basePath:string) {
   
   return (target:AnyNewable) => {
     injectable()(target);
-    
-    
+
     RouteMetadata.createAPI(target, basePath, filePath);
   }
 }
@@ -25,7 +24,7 @@ export function Route(method:string, path?:string) {
   
     const input = paramTypes[0] && paramTypes[0].name !== "Object" ? paramTypes[0] : undefined;
     const output = returnType && returnType.name !== "Object" ? returnType : undefined;
-    
+
     RouteMetadata.createRoute(target.constructor, property, { method, path: path || '/', input, output });
   }
 }

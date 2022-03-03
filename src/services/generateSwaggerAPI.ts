@@ -1,16 +1,13 @@
 import "reflect-metadata"
 import * as path from "path";
-import RouteMetadata, {RouteDescriptor} from "./metadata/RouteMetadata";
+import RouteMetadata, {RouteDescriptor, urlFrom} from "./metadata/RouteMetadata";
 
 export async function generateSwaggerAPI() {
   const paths = {};
   const schemas = {};
   
   RouteMetadata.apis.forEach((api) => {
-    api.routes.forEach((swaggerRoute) => {
-      const route = api.routes.get(swaggerRoute.property)!;
-      const url = path.normalize(`${api.path}/${route.schema.path}`).replace(/\/$/, '');
-      
+    api.routes.forEach((route, url) => {
       if(route.schema.input) {
         schemas[route.schema.input.name] = route.schema.input.schema;
       }
