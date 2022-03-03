@@ -7,6 +7,7 @@ export async function generateSwaggerAPI() {
   const schemas = {};
   
   RouteMetadata.apis.forEach((api) => {
+    debugger;
     api.routes.forEach((route, url) => {
       if(route.schema.input) {
         schemas[route.schema.input.name] = route.schema.input.schema;

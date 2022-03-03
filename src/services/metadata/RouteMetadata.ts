@@ -82,7 +82,6 @@ class RouteMetadata {
     if(!api.methods.has(property)) {
       const route = new RouteDescriptor(property);
       api.methods.set(property, route);
-      api.routes.set(urlFrom(api, route), route);
     }
     
     return api.methods.get(property)!;
@@ -96,8 +95,8 @@ class RouteMetadata {
   }
   
   createRoute(target:AnyNewable, property:string, options:Omit<RouteSchema, 'input' | 'output'> & { input?:string; output?:string; }) {
-    const descriptor = this.getRouteDescriptor(target, property);
-    descriptor.schema = {
+    const route = this.getRouteDescriptor(target, property);
+    route.schema = {
       method: options.method.toLocaleLowerCase(),
       path: options.path
     };
@@ -130,11 +129,12 @@ class RouteMetadata {
         .forEach((middleware) => app.use(middleware));
     }
     
-    this.apis.forEach((apiDescriptor) => {
-      apiDescriptor.methods.forEach((routeDescriptor) => {
-        const url = path.normalize(`${apiDescriptor.path}/${routeDescriptor.schema.path}`);
-        const routeHandlerMiddleware = middlewareFromDescriptor(apiDescriptor, routeDescriptor);
-        app[routeDescriptor.schema.method](url, [
+    this.apis.forEach((api) => {
+      api.methods.forEach((route) => {
+        const url = urlFrom(api, route)
+        api.routes.set(url, route);
+        const routeHandlerMiddleware = middlewareFromDescriptor(api, route);
+        app[route.schema.method](url, [
           ContainerMiddleware(options),
           ...routeHandlerMiddleware,
           SendResponseMiddleware,
@@ -149,7 +149,7 @@ class RouteMetadata {
         .forEach((middleware) => app.use(middleware));
     }
   
-    app.get(options.metadata?.path || '/expressman', (req: Request, resp: Response, next) => {
+    app.get(options.metadata?.path || '/expressman', (req: Request, resp: Response) => {
       resp.send(this.toDTO());
     });
   }
@@ -189,7 +189,7 @@ class RouteMetadata {
     
     this.apis.forEach((api) => {
       api.methods.forEach((route) => {
-        const url = path.normalize(`${api.path}/${route.schema.path}`).replace(/\/$/, '');
+        const url = urlFrom(api, route);
         dto[url] = {
           ...dto[url],
           [route.schema.method]: route.schema
