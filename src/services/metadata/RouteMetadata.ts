@@ -21,7 +21,7 @@ export class APIDescriptor {
   filePath!: string;
   symbols: FileSymbols;
   methods: Map<string, RouteDescriptor> = new Map();
-  routes: Map<string, RouteDescriptor> = new Map();
+  routes: Map<string, Map<string, RouteDescriptor>> = new Map();
 
   constructor(
     public target: AnyNewable
@@ -131,8 +131,15 @@ class RouteMetadata {
     
     this.apis.forEach((api) => {
       api.methods.forEach((route) => {
-        const url = urlFrom(api, route)
-        api.routes.set(url, route);
+        const url = urlFrom(api, route);
+
+        if(!api.routes.get(url)) {
+          api.routes.set(url, new Map());
+        }
+
+        const methodMap = api.routes.get(url)!;
+        methodMap.set(route.schema.method.toLowerCase(), route);
+
         const routeHandlerMiddleware = middlewareFromDescriptor(api, route);
         app[route.schema.method](url, [
           ContainerMiddleware(options),

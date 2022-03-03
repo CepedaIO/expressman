@@ -28,7 +28,6 @@ export function Map(path:string[], options:MapOptions = {}) {
       path.push(kebabCase(propertyKey));
     }
 
-    debugger;
     InputMetadata.createMap(target.constructor, propertyKey, path, options);
   }
 }

@@ -7,9 +7,8 @@ import DependencyContainer from "tsyringe/dist/typings/types/dependency-containe
 import InputMetadata from "../services/metadata/InputMetadata";
 
 async function getPayload(api:APIDescriptor, req:Request) {
-  const route = api.routes.get(req.path);
+  const route = api.routes.get(req.path)?.get(req.method.toLowerCase());
 
-  debugger;
   if(route?.schema.input?.schema) {
      const inputMetadata = InputMetadata.get(route.schema.input.name);
 
