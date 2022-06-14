@@ -1,5 +1,5 @@
 {
-  "name": "@vlegm/expressman",
+  "name": "@cepedaio/expressman",
   "version": "1.0.0",
   "description": "Yet another wrapper around Express",
   "main": "dist/index.js",
